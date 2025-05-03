@@ -58,6 +58,15 @@ struct HomePage:View{
                 }
                 .padding(.horizontal, 20)
                 
+                
+                Button(action :  {}){
+                    Image(systemName: "play.fill")
+                        .font(.title2)
+                    Text("Re-Test Your Range")
+                }
+                .frame(maxWidth : .infinity, alignment : .center)
+                .padding(.vertical , 50)
+                
             }
         }
         .toolbarRole(.navigationStack)
