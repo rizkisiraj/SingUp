@@ -61,7 +61,9 @@ struct HomePage:View{
 
                 }
                 .padding(.horizontal, 20)
-                
+                .onTapGesture {
+                    path.append("exercise")
+                }
                 
                 Button(action :  {}){
                     Image(systemName: "play.fill")
