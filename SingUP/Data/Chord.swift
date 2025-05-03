@@ -6,6 +6,4 @@
 //
 
 
-struct Chord {
-    
-}
+var chord: [String] = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]

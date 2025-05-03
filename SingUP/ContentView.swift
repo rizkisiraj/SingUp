@@ -22,8 +22,14 @@ struct ContentView: View {
                     GenderSelection(path: $path)
                 } else if route == "vtinstruction"{
                     VocalTestInstruction(path : $path)
-                }  else if route == "vtest1"{
-                    VocalTest()
+                } else if route == "vtest1"{
+                    VocalTest(path : $path)
+                } else if route == "vtest2"{
+                    VocalTest(path : $path, type : 1)
+                } else if route == "vocalresult"{
+                    VocalResult(path : $path)
+                }else{
+                    HomePage(path : $path)
                 }
                 
                 

@@ -8,10 +8,11 @@ import Foundation
 class TaskRepeater {
     private var timer : DispatchSourceTimer?
     public var tasks : () -> Void = {}
+    public var interval : Int = 100
     func start() {
         let queue = DispatchQueue.global(qos: .background)
         timer = DispatchSource.makeTimerSource(queue: queue)
-        timer?.schedule(deadline: .now() , repeating: .milliseconds(100))
+        timer?.schedule(deadline: .now() , repeating: .milliseconds(interval))
         timer?.setEventHandler { [weak self] in
             self?.tasks()
         }
