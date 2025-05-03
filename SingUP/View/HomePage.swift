@@ -65,8 +65,10 @@ struct HomePage:View{
                     path.append("exercise")
                 }
                 
-                Button(action :  {}){
-                    Image(systemName: "play.fill")
+                Button(action :  {
+                    path.append("vocaltest")
+                }){
+                    Image(systemName: "arrow.clockwise")
                         .font(.title2)
                     Text("Re-Test Your Range")
                 }
@@ -100,7 +102,7 @@ struct HomePage:View{
                 Button(action: {}){
                     VStack{
                         Image(systemName: "clock.fill")
-                        Text("Profile")
+                        Text("History")
                     }
                 }
             }
