@@ -16,6 +16,8 @@ struct ContentView: View {
             .navigationDestination(for : String.self){ route in
                 if route == "warmup" {
                     WarmUpPage()
+                } else if route == "exercise" {
+                    ExercisePage()
                 }
             }
         }
