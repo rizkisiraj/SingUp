@@ -65,7 +65,9 @@ struct HomePage:View{
                     path.append("exercise")
                 }
                 
-                Button(action :  {}){
+                Button(action :  {
+                    path.append("vocaltest")
+                }){
                     Image(systemName: "play.fill")
                         .font(.title2)
                     Text("Re-Test Your Range")

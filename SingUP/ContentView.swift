@@ -18,7 +18,15 @@ struct ContentView: View {
                     WarmUpPage()
                 } else if route == "exercise" {
                     ExercisePage()
+                } else if route == "vocaltest"{
+                    GenderSelection(path: $path)
+                } else if route == "vtinstruction"{
+                    VocalTestInstruction(path : $path)
+                }  else if route == "vtest1"{
+                    VocalTest()
                 }
+                
+                
             }
         }
     }
