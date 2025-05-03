@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct HomePage:View{
+    @Binding var path : NavigationPath
     
     var body: some View{
         //Pake scroll view biar kaga over
@@ -44,10 +45,13 @@ struct HomePage:View{
                         .padding(.horizontal, 10)
 
                 }
+                .onTapGesture {
+                    path.append("warmup")
+                }
                 .padding()
                 
                 GroupBox{
-                    Text("Vocal WarmUp")
+                    Text("Vocal Excercise")
                         .multilineTextAlignment(.leading)
                         .font(.title2)
                         .bold(true)
@@ -113,5 +117,6 @@ struct HomePage:View{
 
 
 #Preview {
-    HomePage()
+    @Previewable @State var path = NavigationPath()
+    HomePage(path : $path )
 }
