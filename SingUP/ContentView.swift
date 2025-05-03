@@ -8,14 +8,17 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var path = NavigationPath()
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack(path : $path) {
+            HomePage(path : $path)
+            .navigationDestination(for : String.self){ route in
+                if route == "warmup" {
+                    WarmUpPage()
+                }
+            }
         }
-        .padding()
     }
 }
 
