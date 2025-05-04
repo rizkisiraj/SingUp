@@ -12,7 +12,10 @@ struct VocalTest: View {
     @Binding public var path : NavigationPath
     @State private var Num = 0
     public var type =  0
-    
+    @StateObject var detector = FrequencyDetector()
+    @State var key = 0
+    @State var octave = 1
+   
     var taskRepeater = TaskRepeater()
     
     func increment() {
@@ -21,6 +24,10 @@ struct VocalTest: View {
     
     func reScale(range : Int)-> Int{
         return (chord.count + Num + range  ) % chord.count;
+    }
+    
+    func getChord() -> [Int]{
+        return getChordByFrequency(freq: Int(detector.frequency))
     }
     
     
@@ -40,35 +47,35 @@ struct VocalTest: View {
             .padding(.horizontal, 20)
         
         HStack(spacing : 0){
-                Text("\(chord[reScale(range : -2)])")
-                    .font(.title)
+                Text("\(chord[ (chord.count + getChord()[0]-2) % chord.count ])\(getChord()[1])")
+                    .font(.title2)
                     .padding()
                 
-                Text("\(chord[reScale(range : -1)])")
-                    .font(.title)
+                Text("\(chord[ (chord.count + getChord()[0]-1) % chord.count ])\(getChord()[1])")
+                    .font(.title2)
                     .padding()
                 
 
-                Text("\(chord[Num])")
-                    .font(.system(size: 60))
+                Text("\(chord[getChord()[0]])\(getChord()[1])")
+                .font(.largeTitle)
                     .bold(true)
                     .multilineTextAlignment(.center)
                     .padding()
                 
                 
-                Text("\(chord[reScale(range : 1)])")
-                    .font(.title)
+                Text("\(chord[ (getChord()[0]+1) % chord.count ])\(getChord()[1])")
+                    .font(.title2)
                     .padding()
                 
-                Text("\(chord[reScale(range : 2)])")
-                    .font(.title)
+                Text("\(chord[ (getChord()[0]+2) % chord.count ])\(getChord()[1])")
+                    .font(.title2)
                     .padding()
                 
             }
             .onAppear{
-                taskRepeater.tasks = increment
-                taskRepeater.interval = 500
-                taskRepeater.start()
+                key = getChordByFrequency(freq: Int(detector.frequency))[0]
+                octave = getChordByFrequency(freq: Int(detector.frequency))[1]
+
             }
            
         Divider()

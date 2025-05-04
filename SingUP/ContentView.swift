@@ -12,6 +12,7 @@ struct ContentView: View {
     
     var body: some View {
         NavigationStack(path : $path) {
+            //Mic()
             HomePage(path : $path)
             .navigationDestination(for : String.self){ route in
                 if route == "warmup" {
@@ -29,6 +30,7 @@ struct ContentView: View {
                 } else if route == "vocalresult"{
                     VocalResult(path : $path)
                 }else{
+                    //Mic()
                     HomePage(path : $path)
                 }
                 
