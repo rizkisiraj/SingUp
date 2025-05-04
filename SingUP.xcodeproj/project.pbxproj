@@ -10,9 +10,22 @@
 		08DE93CE2DC1069D00089B3F /* SingUP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SingUP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		086AE8F62DC7B112009CEAA3 /* Exceptions for "SingUP" folder in "SingUP" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 08DE93CD2DC1069D00089B3F /* SingUP */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		08DE93D02DC1069D00089B3F /* SingUP */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				086AE8F62DC7B112009CEAA3 /* Exceptions for "SingUP" folder in "SingUP" target */,
+			);
 			path = SingUP;
 			sourceTree = "<group>";
 		};
@@ -255,6 +268,8 @@
 				DEVELOPMENT_TEAM = 5S8FM9N45F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SingUP/Info.plist;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Kami memerlukan akses mikrofon untuk mendeteksi frekuensi suara.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -284,6 +299,8 @@
 				DEVELOPMENT_TEAM = 5S8FM9N45F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SingUP/Info.plist;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Kami memerlukan akses mikrofon untuk mendeteksi frekuensi suara.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
