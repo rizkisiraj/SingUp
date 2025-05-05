@@ -26,9 +26,15 @@ struct GenderSelection : View{
                     Text("Male")
                         .font(.title)
                         .frame(maxWidth : .infinity)
+                    
                 }
+                .padding(.vertical, 10)
+
             }
             .padding(.horizontal, 50)
+            .onTapGesture {
+                path.append("vtinstruction")
+            }
             
             GroupBox{
                 HStack{
@@ -39,6 +45,8 @@ struct GenderSelection : View{
                         .font(.title)
                         .frame(maxWidth : .infinity)
                 }
+                .padding(.vertical, 10)
+
             }
             .padding(.horizontal, 50)
             .onTapGesture {
@@ -56,5 +64,6 @@ struct GenderSelection : View{
 #Preview{
     @Previewable @State var path = NavigationPath()
 
-    GenderSelection(path : $path)
+    //GenderSelection(path : $path)
+    ContentView()
 }

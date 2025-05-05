@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+var peakFreq =  0
 
 struct VocalTest: View {
     @Binding public var path : NavigationPath
@@ -15,6 +16,19 @@ struct VocalTest: View {
     @StateObject var detector = FrequencyDetector()
     @State var key = 0
     @State var octave = 1
+    
+    
+    
+    
+    func getPeakFreqChord() -> String{
+        print(peakFreq)
+        if type == 0 && Int(detector.frequency) < peakFreq{
+            peakFreq = Int(detector.frequency)
+        }else if type == 1 && Int(detector.frequency) > peakFreq{
+            peakFreq = Int(detector.frequency)
+        }
+        return "\(chord[  getChordByFrequency(freq : peakFreq)[0]  ])\( getChordByFrequency(freq : peakFreq)[1] )";
+    }
    
     var taskRepeater = TaskRepeater()
     
@@ -75,13 +89,18 @@ struct VocalTest: View {
             .onAppear{
                 key = getChordByFrequency(freq: Int(detector.frequency))[0]
                 octave = getChordByFrequency(freq: Int(detector.frequency))[1]
-
+                peakFreq = type == 0 ? 99999 : 0
             }
            
         Divider()
             .padding(.horizontal, 20)
         
-        Text("Hold for 2 seconds")
+        Text(String(format: "%.2f Hz", detector.frequency))
+                        .font(.title)
+                        .foregroundColor(.blue)
+                        .padding()
+        
+        Text("Your\(type == 0 ? " Lowest" : " Highest") chord is : \(getPeakFreqChord())")
             .padding()
         
         Button(
@@ -105,5 +124,6 @@ struct VocalTest: View {
 
 #Preview{
     @Previewable @State var path = NavigationPath()
-    ContentView()
+    //ContentView()
+    VocalTest(path : $path)
 }
