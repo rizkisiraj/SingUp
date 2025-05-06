@@ -37,6 +37,7 @@ struct ContentView: View {
                 }else{
                     //Mic()
                     HomePage(path : $path)
+                        .modelContainer(for : [UserProfile.self])
                 }
                 
                 
