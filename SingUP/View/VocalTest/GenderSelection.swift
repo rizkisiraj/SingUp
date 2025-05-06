@@ -35,6 +35,15 @@ struct GenderSelection : View{
             }
             .padding(.horizontal, 50)
             .onTapGesture {
+                if let user = userProfile.first{
+                    user.gender = "Male"
+                    do{
+                        try context.save()
+                        print("Berhasil mengsave gender !")
+                    }catch{
+                        print("Gagal menyimpan gender ! \(error)")
+                    }
+                }
                 path.append("vtinstruction")
             }
             
@@ -52,6 +61,16 @@ struct GenderSelection : View{
             }
             .padding(.horizontal, 50)
             .onTapGesture {
+                if let user = userProfile.first{
+                    user.gender = "Female"
+                    do{
+                        try context.save()
+                        print("Berhasil mengsave gender !")
+
+                    }catch{
+                        print("Gagal menyimpan gender ! \(error)")
+                    }
+                }
                 path.append("vtinstruction")
             }
         }

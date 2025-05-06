@@ -95,7 +95,15 @@ struct HomePage:View{
                         }
                         
                         Button(action :  {
-                            path.append("vocaltest")
+                            if let user = userProfile.first{
+                                print(user.gender)
+                                if user.gender == "Male" || user.gender == "Female"{
+                                    path.append("vtinstruction")
+                                    return;
+                                }
+                                path.append("exercise")
+                            }
+                            
                         }){
                             Image(systemName: "arrow.clockwise")
                                 .font(.title2)
