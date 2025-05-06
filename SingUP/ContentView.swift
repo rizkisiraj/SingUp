@@ -14,6 +14,7 @@ struct ContentView: View {
         NavigationStack(path : $path) {
             //Mic()
             HomePage(path : $path)
+                .modelContainer(for : [UserProfile.self])
             .navigationDestination(for : String.self){ route in
                 if route == "warmup" {
                     WarmUpPage()
@@ -25,8 +26,10 @@ struct ContentView: View {
                     VocalTestInstruction(path : $path)
                 } else if route == "vtest1"{
                     VocalTest(path : $path)
+                        .modelContainer(for : [UserProfile.self])
                 } else if route == "vtest2"{
                     VocalTest(path : $path, type : 1)
+                        .modelContainer(for : [UserProfile.self])
                 } else if route == "vocalresult"{
                     VocalResult(path : $path)
                 }else{

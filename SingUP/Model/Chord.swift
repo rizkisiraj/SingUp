@@ -12,7 +12,6 @@ var lim : [Int] = [33, 65, 131, 262, 523, 1047, 2093, 4186];
 
 //Ini buat nentuin chord by scale , nanti ada ku buat tabel nya
 func chordyfy (scale : Float) -> Int{
-    print("Scale : \(scale)")
     if scale >= 0.95{
         return 11;
     }else if scale >= 0.8{
@@ -60,7 +59,13 @@ func getChordByFrequency(freq : Int) -> [Int] {
         octave = 1;
     }
     
-    var scale : Float = Float( abs( Float(freq) - Float(lim[octave-1]) )) / Float( abs(lim[octave-1] - lim[octave])  );
+    let scale : Float = Float( abs( Float(freq) - Float(lim[octave-1]) )) / Float( abs(lim[octave-1] - lim[octave])  );
     
     return [ chordyfy(scale: scale) , octave ];
+}
+
+
+func getChordString(frequency : Int)->String{
+    
+    return "\(chord[getChordByFrequency(freq: frequency)[0]]) \(getChordByFrequency(freq: frequency)[1])";
 }

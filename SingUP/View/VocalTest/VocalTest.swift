@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 var peakFreq =  0
 
@@ -16,13 +17,12 @@ struct VocalTest: View {
     @StateObject var detector = FrequencyDetector()
     @State var key = 0
     @State var octave = 1
-    
-    
+    @Environment(\.modelContext) private var context
+    @Query var userProfile : [UserProfile]
     
     
     func getPeakFreqChord() -> String{
-        print(peakFreq)
-        if type == 0 && Int(detector.frequency) < peakFreq{
+        if type == 0 && Int(detector.frequency) < peakFreq && Int(detector.frequency) > 0 {
             peakFreq = Int(detector.frequency)
         }else if type == 1 && Int(detector.frequency) > peakFreq{
             peakFreq = Int(detector.frequency)
@@ -90,6 +90,7 @@ struct VocalTest: View {
                 key = getChordByFrequency(freq: Int(detector.frequency))[0]
                 octave = getChordByFrequency(freq: Int(detector.frequency))[1]
                 peakFreq = type == 0 ? 99999 : 0
+                
             }
            
         Divider()
@@ -105,6 +106,20 @@ struct VocalTest: View {
         
         Button(
             action : {
+                if let prof = userProfile.first{
+                    if type == 0 {
+                        prof.lowestFrequency = Float(peakFreq)
+                    } else {
+                        prof.highestFrequency = Float(peakFreq)
+                    }
+                    do{
+                        try context.save()
+                        print("Berhasil menyimpan hasil test")
+
+                    }catch{
+                        print("Gagal menyimpan hasil test \(error)")
+                    }
+                }
                 path.append(type == 0 ? "vtest2" : "vocalresult")
             }
         ){

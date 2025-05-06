@@ -6,14 +6,16 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct HomePage:View{
     @Binding var path : NavigationPath
     @State var page : Int = 0
+    @Query var userProfile : [UserProfile]
+    @State var freq : [Int] = [0, 9999]
+    @Environment(\.modelContext) var context
     
     var body: some View{
-        //Pake scroll view biar kaga over
-        
         VStack{
             
             if page == 0 {
@@ -41,7 +43,7 @@ struct HomePage:View{
                             .padding(.bottom , 0)
                             .padding(.top, 20)
                         
-                        Text("C3 - E5")
+                        Text("\(getChordString(frequency : freq[0])) - \(getChordString(frequency : freq[1]))")
                             .font(.title3)
                             .bold(true)
                             .frame(maxWidth : .infinity, alignment : .center)
@@ -100,6 +102,19 @@ struct HomePage:View{
                         .frame(maxWidth : .infinity, alignment : .center)
                         .padding(.vertical , 50)
                         
+                    }
+                }
+                .onAppear(){
+                    if let prof = userProfile.first{
+                        freq = [Int(prof.lowestFrequency), Int(prof.highestFrequency)]
+                    }else{
+                        var newProf = UserProfile(
+                            gender : "-",
+                            lowestFrequency: 0,
+                            highestFrequency: 0
+                        )
+                        
+                        context.insert(newProf)
                     }
                 }
             }else{
