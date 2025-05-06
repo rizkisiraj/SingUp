@@ -90,7 +90,7 @@ class FrequencyDetector: ObservableObject {
                 if let maxMagnitude = magnitudes.max(),
                    let maxIndex = magnitudes.firstIndex(of: maxMagnitude) {
                     
-                    if maxMagnitude > 500.0 {
+                    if maxMagnitude > 200.0 {
                         let sampleRate = Float(buffer.format.sampleRate)
                         let freq = sampleRate * Float(maxIndex) / Float(fftSize)
                         DispatchQueue.main.async {

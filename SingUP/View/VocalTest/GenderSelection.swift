@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct GenderSelection : View{
     @Binding var path : NavigationPath
-    
+    @Environment(\.modelContext) var context
+    @Query var userProfile : [UserProfile]
     
     var body : some View{
         VStack(){

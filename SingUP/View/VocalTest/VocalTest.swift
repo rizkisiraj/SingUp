@@ -22,9 +22,12 @@ struct VocalTest: View {
     
     
     func getPeakFreqChord() -> String{
-        if type == 0 && Int(detector.frequency) < peakFreq && Int(detector.frequency) > 0 {
+        print("\(peakFreq)  \(Int(detector.frequency)) \(type == 1 && Int(detector.frequency) > peakFreq) ")
+        if type == 0 && Int(detector.frequency) < peakFreq && Int(detector.frequency) > 60 {
             peakFreq = Int(detector.frequency)
-        }else if type == 1 && Int(detector.frequency) > peakFreq{
+        }
+        
+        if type == 1 && Int(detector.frequency) > peakFreq{
             peakFreq = Int(detector.frequency)
         }
         return "\(chord[  getChordByFrequency(freq : peakFreq)[0]  ])\( getChordByFrequency(freq : peakFreq)[1] )";
@@ -120,6 +123,7 @@ struct VocalTest: View {
                         print("Gagal menyimpan hasil test \(error)")
                     }
                 }
+                path.removeLast(1)
                 path.append(type == 0 ? "vtest2" : "vocalresult")
             }
         ){

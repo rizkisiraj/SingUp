@@ -13,6 +13,7 @@ struct HomePage:View{
     @State var page : Int = 0
     @Query var userProfile : [UserProfile]
     @State var freq : [Int] = [0, 9999]
+    var vocalRange = VocalRange()
     @Environment(\.modelContext) var context
     
     var body: some View{
@@ -36,7 +37,7 @@ struct HomePage:View{
                             .frame(maxWidth : .infinity, alignment : .center)
                         
                         
-                        Text("Tenor")
+                        Text(vocalRange.getVocalType(lowFreq: freq[0], highFreq: freq[1]))
                             .font(.largeTitle)
                             .bold(true)
                             .frame(maxWidth : .infinity, alignment : .center)
@@ -62,6 +63,7 @@ struct HomePage:View{
                                     .bold(true)
                                     .frame(maxWidth : .infinity, alignment : .leading)
                                     .padding(.vertical, 20)
+                                    .padding(.horizontal, 10)
                             }
                             
                             

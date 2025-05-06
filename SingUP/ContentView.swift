@@ -22,6 +22,7 @@ struct ContentView: View {
                     ExercisePage()
                 } else if route == "vocaltest"{
                     GenderSelection(path: $path)
+                        .modelContainer(for : [UserProfile.self])
                 } else if route == "vtinstruction"{
                     VocalTestInstruction(path : $path)
                 } else if route == "vtest1"{
@@ -32,6 +33,7 @@ struct ContentView: View {
                         .modelContainer(for : [UserProfile.self])
                 } else if route == "vocalresult"{
                     VocalResult(path : $path)
+                        .modelContainer(for : [UserProfile.self])
                 }else{
                     //Mic()
                     HomePage(path : $path)
