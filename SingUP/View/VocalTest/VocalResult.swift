@@ -14,22 +14,61 @@ struct VocalResult: View {
     var vocalRange = VocalRange()
     @Environment(\.modelContext) var context
     @Query var userProfile : [UserProfile]
+    
+    func getRange(idx : Int)->Bool{
+        //vocalRange.getVocalTypeIndex(lowFreq: freq[0], highFreq: freq[1])
+        let vocalIdx = vocalRange.getVocalTypeIndex(lowFreq: freq[0], highFreq: freq[1]) * 4
+        if (24 - idx ) <= vocalIdx + 4 && (24 - idx ) > vocalIdx {
+            return true;
+        }
+        return false
+    }
 
     var body: some View {
-        Text("Amazing !! \nYou Are")
+        Text("Your vocal range is : ")
             .multilineTextAlignment(.center)
             .font(.title)
-            .padding()
-        
-        Image(systemName : "microphone.circle.fill")
-            .font(.system(size : 150))
+            .padding(5)
         
         Text(vocalRange.getVocalType(lowFreq: freq[0], highFreq: freq[1]))
-            .multilineTextAlignment(.center)
-            .font(.largeTitle)
-            .bold(true)
-            .padding(.bottom , 50)
+                    .multilineTextAlignment(.center)
+                    .font(.largeTitle)
+                    .bold(true)
+                
+        HStack(spacing : 0){
+            VStack(spacing : 20){
+                ForEach(Array(vocalRange.range.reversed().enumerated()), id: \.offset) { index, item in
+                    Text(item)
+                        .foregroundStyle(( ((vocalRange.range.count - 1) - index ) == vocalRange.getVocalTypeIndex(lowFreq: freq[0], highFreq: freq[1]) ) ? .blue : .gray )
+                }
+            }
+            
+            VStack(spacing : 5){
+                Text("Highest")
+                    .font(.title3.bold())
+                    .padding(.vertical, 20)
+
+                ForEach(0..<24){ index in
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill( getRange(idx : index) ? .blue : .gray)
+                        .frame(maxWidth : 30, maxHeight: 5)
+                }
+               
+                Text("Lowest")
+                    .font(.title3.bold())
+                    .padding(.vertical, 20)
+            }
+        }
+        .padding(.trailing, 60)
+
         
+        
+//        Text(vocalRange.getVocalType(lowFreq: freq[0], highFreq: freq[1]))
+//            .multilineTextAlignment(.center)
+//            .font(.largeTitle)
+//            .bold(true)
+//            .padding(.bottom , 50)
+//        
         Button(action: {
             path = NavigationPath()
         }) {
@@ -53,6 +92,6 @@ struct VocalResult: View {
 
 #Preview {
     @Previewable @State var path = NavigationPath()
-    //VocalResult(path : $path)
-    ContentView()
+    VocalResult(path : $path)
+    //ContentView()
 }

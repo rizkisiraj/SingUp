@@ -44,12 +44,12 @@ struct VocalTest: View {
     }
     
     func getChord() -> [Int]{
-        return getChordByFrequency(freq: Int(detector.frequency))
+        return getChordByFrequency(freq: Int(peakFreq))
     }
     
     
     var body: some View {
-        Text("Sing Ahh \n as \(type == 0 ? "Lowest" : "Highest") as u Can")
+        Text("Sing \n as \(type == 0 ? "Lowest" : "Highest") as u Can")
             .font(.title)
             .multilineTextAlignment(.center)
             .bold(true)
@@ -99,13 +99,16 @@ struct VocalTest: View {
         Divider()
             .padding(.horizontal, 20)
         
-        Text(String(format: "%.2f Hz", detector.frequency))
+        Text("\(peakFreq < 99999 ? peakFreq : 0) Hz")
                         .font(.title)
                         .foregroundColor(.blue)
                         .padding()
-        
-        Text("Your\(type == 0 ? " Lowest" : " Highest") chord is : \(getPeakFreqChord())")
-            .padding()
+        HStack{
+            Text("Your\(type == 0 ? " Lowest" : " Highest") chord is : ")
+            Text("\(getPeakFreqChord())")
+                .font(.title2.bold())
+        }
+       
         
         Button(
             action : {
@@ -130,8 +133,8 @@ struct VocalTest: View {
             Text("Lanjut")
                 .foregroundStyle(.white)
         }
-        .padding(10)
-        .padding(.horizontal, 40)
+        .padding(15)
+        .padding(.horizontal, 100)
         .background(
             RoundedRectangle(cornerRadius: 10).fill(Color.blue)
         )

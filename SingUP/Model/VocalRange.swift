@@ -6,6 +6,8 @@
 //
 
 class VocalRange{
+    public var range : [String] = ["Bass", "Baritone", "Tenor", "Alto", "Mezzo", "Soprano"]
+    
     
     func getVocalType(lowFreq : Int, highFreq : Int)->String{
         if lowFreq >= 98 {
@@ -14,6 +16,16 @@ class VocalRange{
             return "Baritone"
         }else  {
             return "Bass"
+        }
+    }
+    
+    func getVocalTypeIndex(lowFreq : Int, highFreq : Int)->Int{
+        if lowFreq >= 98 {
+            return 2
+        }else if lowFreq >= 82 {
+            return 1
+        }else  {
+            return 0
         }
     }
 }
