@@ -49,20 +49,22 @@ struct VocalTest: View {
     
     
     var body: some View {
-        Text("Sing \n as \(type == 0 ? "Lowest" : "Highest") as u Can")
+        Text("Sing 'AHH' \n as \(type == 0 ? "Lowest" : "Highest") as u Can")
             .font(.title)
             .multilineTextAlignment(.center)
             .bold(true)
             .padding()
-            .padding(.bottom, 30)
+            .padding(.bottom, 100)
         
         
-        Image(systemName: "arrowshape.down.fill")
+        Image(systemName: "arrowtriangle.down.fill")
+            .foregroundStyle(.purple)
+            .font(.title.bold())
             .frame(maxWidth : .infinity, alignment : .center)
         
-        Divider()
-            .padding(.horizontal, 20)
-        
+//        Divider()
+//            .padding(.horizontal, 20)
+//        
         HStack(spacing : 0){
                 Text("\(chord[ (chord.count + getChord()[0]-2) % chord.count ])\(getChord()[1])")
                     .font(.title2)
@@ -96,18 +98,29 @@ struct VocalTest: View {
                 
             }
            
-        Divider()
-            .padding(.horizontal, 20)
+//        Divider()
+//            .padding(.horizontal, 20)
         
         Text("\(peakFreq < 99999 ? peakFreq : 0) Hz")
                         .font(.title)
                         .foregroundColor(.blue)
                         .padding()
-        HStack{
-            Text("Your\(type == 0 ? " Lowest" : " Highest") chord is : ")
-            Text("\(getPeakFreqChord())")
-                .font(.title2.bold())
+        Button(action : {}){
+            Image(systemName: "arrowtriangle.down.circle.fill")
+            Text("Go Lower")
         }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 5)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(.gray)
+                .opacity(0.1)
+        )
+//        HStack{
+//            Text("Your\(type == 0 ? " Lowest" : " Highest") chord is : ")
+//            Text("\(getPeakFreqChord())")
+//                .font(.title2.bold())
+//        }
        
         
         Button(
@@ -126,11 +139,11 @@ struct VocalTest: View {
                         print("Gagal menyimpan hasil test \(error)")
                     }
                 }
-                path.removeLast(1)
+//                path.removeLast(1)
                 path.append(type == 0 ? "vtest2" : "vocalresult")
             }
         ){
-            Text("Lanjut")
+            Text("Continue")
                 .foregroundStyle(.white)
         }
         .padding(15)
@@ -138,7 +151,8 @@ struct VocalTest: View {
         .background(
             RoundedRectangle(cornerRadius: 10).fill(Color.blue)
         )
-            
+        .padding(.top, 50)
+
         
     }
         

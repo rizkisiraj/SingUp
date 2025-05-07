@@ -13,28 +13,32 @@ struct VocalTestInstruction : View{
     var body : some View{
         VStack(){
             
-            Text("Instruksi")
-                .font(.title)
+            Text("Vocal Range Test")
+                .font(.title.bold())
                 .bold(true)
             
-            Image(systemName: "photo")
-                .font(.system(size: 200))
+            Image("VocalRangeTestIcon")
+                .resizable()
+                .frame(width: 300, height: 300)
                 .padding()
             
-            Text("Baca instruksi berikut untuk memulai test vocal range anda ")
+            Text("Discover your vocal range by singing 'Ahh' as the notes go higher and lower stop when you reach the highest or lowest note you can sing comfortably.   ")
                 .multilineTextAlignment(.center)
                 .frame(alignment : .center)
+                .font(.caption)
                 .padding(.horizontal, 50)
             
             Button(action: {path.append("vtest1")}){
-                Text("Start Test")
+                Text("Continue")
                     .font(.headline)
+                    .frame(maxWidth : .infinity)
                     .foregroundColor(.white)
                     .padding()
                     .background(Color.blue)
                     .cornerRadius(10)
+                    
             }
-            .padding()
+            .padding(50)
             .onTapGesture {
                 
             }
