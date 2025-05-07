@@ -123,7 +123,6 @@ struct HomePage:View{
                             lowestFrequency: 0,
                             highestFrequency: 0
                         )
-                        
                         context.insert(newProf)
                     }
                 }
