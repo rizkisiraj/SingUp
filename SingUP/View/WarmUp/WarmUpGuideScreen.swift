@@ -8,8 +8,8 @@ import SwiftUI
 import Foundation
 
 
-struct BreathingPage: View {
-    @Binding var warmUp: WarmUp
+struct WarmUpGuideScreen: View {
+    var warmUp: WarmUp
     
     var body: some View {
         VStack {
@@ -42,8 +42,8 @@ struct BreathingPage: View {
 
 #Preview{
     NavigationStack{
-        BreathingPage(
-            warmUp: .constant(listOfWarmUp[0])
+        WarmUpGuideScreen(
+            warmUp: listOfWarmUp[0]
         )
     }
 }
