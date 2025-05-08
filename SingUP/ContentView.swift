@@ -13,7 +13,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack(path : $path) {
             //Mic()
-            //WarmUpSessionScreen()
+            //  WarmUpSessionScreen()
             HomePage(path : $path)
                 .modelContainer(for : [UserProfile.self])
             .navigationDestination(for : String.self){ route in
