@@ -17,6 +17,6 @@ struct Exercise: Identifiable {
 }
 
 let listOfExercise: [Exercise] = [
-    Exercise(title: "Sustain", image: .scaleTraining, description: "Put description here", shortDesc: "Long, Steady notes", path:  "sustain"),
-    Exercise(title: "Scale", image: .vocalExercise, description: "Train your pitch accuracy and vocal agility by singing through scales smoothly and evenly, one note at a time.", shortDesc: "Practice Vocal Range", path : "scale"),
+    Exercise(title: "Sustain", image: .sustainTraining, description: "Sustain vocal training teaches you how to hold a note longer with steady sound and clear pitch. It helps you breathe better and keep your voice strong.", shortDesc: "Long, Steady notes", path:  "sustain"),
+    Exercise(title: "Scale", image: .scaleTraining, description: "Train your pitch accuracy and vocal agility by singing through scales smoothly and evenly, one note at a time.", shortDesc: "Practice Vocal Range", path : "scale"),
 ]

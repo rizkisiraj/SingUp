@@ -36,7 +36,7 @@ struct ExercisePage: View {
                 }
             }
         }
-        .navigationTitle("Warm Up")
+        .navigationTitle("Vocal Training")
     }
 }
 
