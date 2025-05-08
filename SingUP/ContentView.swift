@@ -32,9 +32,15 @@ struct ContentView: View {
                 } else if route == "vtest2"{
                     VocalTest(path : $path, type : 1)
                         .modelContainer(for : [UserProfile.self])
+                } else if route == "warmupdone"{
+                    BreathingDoneScreen(path: $path)
                 } else if route == "vocalresult"{
                     VocalResult(path : $path)
                         .modelContainer(for : [UserProfile.self])
+                } else if route == "breathing"{
+                    BreathingView(path: $path)
+                } else if route == "warmupdone" {
+                    BreathingView(path: $path)
                 } else if route == "humming"{
                     WarmUpSessionScreen()
                         .modelContainer(for : [UserProfile.self])

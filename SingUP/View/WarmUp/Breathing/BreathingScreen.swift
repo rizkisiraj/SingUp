@@ -11,6 +11,7 @@ struct BreathingView: View {
         let holdDuration: Double?
     }
     
+    @Binding var path: NavigationPath
     @State private var isFinished = false
     @State private var currentSessionIndex = 0
     @State private var phase: BreathingPhase = .inhale
@@ -63,10 +64,6 @@ struct BreathingView: View {
             Button("Pause") {
                 // Pause logic placeholder
             }
-            
-            NavigationLink(destination: BreathingDoneScreen(), isActive: $isFinished) {
-                EmptyView()
-            }
 
             Spacer()
         }
@@ -117,24 +114,22 @@ struct BreathingView: View {
             } else {
                 phase = .exhale
                 // Done
+                if currentSessionIndex == sessions.count - 1 {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        path.append("warmupdone")
+    //                    print("Siraj selesai")
+                }
             }
+            
         }
         
-        if currentSessionIndex < sessions.count - 1 {
-            currentSessionIndex += 1
-            startSession()
-        } else {
-            // Final exhale done
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                isFinished = true
-            }
         }
     }
 }
 
-struct BreathingView_Previews: PreviewProvider {
-    static var previews: some View {
-        BreathingView()
-    }
-}
+//struct BreathingView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        BreathingView()
+//    }
+//}
 
