@@ -6,11 +6,14 @@
 //
 
 import SwiftUI
+import Foundation
 
 struct WarmUpSessionScreen: View {
     // Dummy pitch data
     @State var yPos = -240
+    @StateObject var detector = FrequencyDetector()
     @State var xPos = 0
+    var octave = 2
     var repeater = TaskRepeater()
     
    let notes = ["A5", "G5", "F5", "E5", "D5", "C5", "B4", "A4", "G4", "F4", "E4", "D4", "C4", "B3", "A3", "G3", "F3", "E3", "D3", "C3", "B2", "A2", "G2", "F2", "E2"]
@@ -23,6 +26,11 @@ struct WarmUpSessionScreen: View {
        "G3": 4,
        "A3": 5
    ]
+    
+    func getCurrentNote()->Int{
+        let freq = getChordByFrequency(freq: Int(detector.frequency));
+        return max((freq[0] + ( (freq[1] - 1) * 12 )) - 13 , 0);
+    }
    
    @State private var currentNote = "D3"
    @State private var progress: CGFloat = 0.2
@@ -54,7 +62,7 @@ struct WarmUpSessionScreen: View {
                    VStack(spacing: 0) {
                        ForEach(notes, id: \.self) { note in
                            HStack {
-                               Text(note)
+                               Text("")
                                    .font(.caption)
                                    .frame(width: 40, alignment: .leading)
                                Rectangle()
@@ -67,10 +75,10 @@ struct WarmUpSessionScreen: View {
                    }
                    .padding(.leading)
                    
-                   ForEach(0..<30){ index in
+                   ForEach(0..<24){ index in
                        Rectangle()
                            .frame(width: 50, height: 20)
-                           .offset(x: CGFloat(index * 50) + CGFloat(xPos), y : 240 - CGFloat(abs(abs(10-(index%20)) - 10 ))*40)
+                           .offset(x: CGFloat(index * 50) + CGFloat(xPos), y : 240 - CGFloat(abs(abs(12-(index%24)) - 12 ))*40)
                            
                    }.zIndex(0)
                    
@@ -79,25 +87,30 @@ struct WarmUpSessionScreen: View {
                        .offset(x : 50)
                  
                    VStack(spacing: 0) {
-                       ForEach(notes, id: \.self) { note in
+                       Text("")
+                           .font(.caption)
+                           .padding(.trailing , 10)
+
+                           .frame(width: 50, height : 20, alignment: .trailing)
+                           .background(Color.white)
+                       ForEach(0..<24) { note in
                            HStack {
-                               Text(note)
+                               Text("\(chord[(23-note)%chord.count])\(Int(floor(Double(24-note)/12)) + octave)")
                                    .font(.caption)
                                    .padding(.trailing , 10)
 
-                                   .frame(width: 50, height : 20, alignment: .trailing)
-                                   .background(.white)
-                               Rectangle()
-                                   .fill(Color.clear)
-                                   .frame(height: 20)
+                                   .frame(width: 50, height : 20.3, alignment: .trailing)
+                                   .background(Color.white)
                            }
+                               
                        }
                    }
                    
                    
-                   Circle()
-                       .frame(width: 25)
-                       .offset(x : 40, y : CGFloat(yPos))
+                   Image("Indicator")
+                       .resizable()
+                       .frame(width: 30, height : 30)
+                       .offset(x : 40, y : detector.frequency <= 30 ? 244 :  (12 - CGFloat(getCurrentNote())) * CGFloat(20))
                    //CGFloat(geometry.size.hashValue) * activeNotes[currentNote]!
                    
                }
@@ -105,8 +118,10 @@ struct WarmUpSessionScreen: View {
            .frame(height: 480)
 
            Spacer()
-           
+           Text("\(detector.frequency)")
+           Text(getChordString(frequency: Int(detector.frequency)))
            // Stop button
+           //Text("\((10 - CGFloat(getCurrentNote())) * 24)")
            Button(action: {
                // Stop action
            }) {
