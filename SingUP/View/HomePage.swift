@@ -141,7 +141,7 @@ struct HomePage:View{
                                     path.append("vtinstruction")
                                     return;
                                 }
-                                path.append("exercise")
+                                path.append("vocaltest")
                             }
                             
                         }){
