@@ -10,6 +10,7 @@ import Foundation
 
 struct WarmUpGuideScreen: View {
     var warmUp: WarmUp
+    @Binding var path : NavigationPath
     
     var body: some View {
         VStack {
@@ -25,7 +26,7 @@ struct WarmUpGuideScreen: View {
                 
             Spacer()
             Button {
-                
+                path.append(warmUp.path)
             } label: {
                 Text("Start")
                     .fontWeight(.semibold)
@@ -41,9 +42,12 @@ struct WarmUpGuideScreen: View {
 }
 
 #Preview{
+    @Previewable @State var path = NavigationPath()
+
     NavigationStack{
         WarmUpGuideScreen(
-            warmUp: listOfWarmUp[0]
+            warmUp: listOfWarmUp[0],
+            path : $path
         )
     }
 }

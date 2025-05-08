@@ -18,7 +18,7 @@ struct ContentView: View {
                 .modelContainer(for : [UserProfile.self])
             .navigationDestination(for : String.self){ route in
                 if route == "warmup" {
-                    WarmUpPage()
+                    WarmUpPage(path : $path)
                 } else if route == "exercise" {
                     ExercisePage()
                 } else if route == "vocaltest"{
@@ -35,7 +35,16 @@ struct ContentView: View {
                 } else if route == "vocalresult"{
                     VocalResult(path : $path)
                         .modelContainer(for : [UserProfile.self])
-                }else{
+                } else if route == "humming"{
+                    WarmUpSessionScreen()
+                        .modelContainer(for : [UserProfile.self])
+                } else if route == "liptrills"{
+                    WarmUpSessionScreen()
+                        .modelContainer(for : [UserProfile.self])
+                } else if route == "tonguetrill"{
+                    WarmUpSessionScreen()
+                        .modelContainer(for : [UserProfile.self])
+                } else{
                     //Mic()
                     HomePage(path : $path)
                         .modelContainer(for : [UserProfile.self])

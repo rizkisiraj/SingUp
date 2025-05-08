@@ -116,11 +116,11 @@ struct VocalTest: View {
                 .fill(.gray)
                 .opacity(0.1)
         )
-//        HStack{
-//            Text("Your\(type == 0 ? " Lowest" : " Highest") chord is : ")
-//            Text("\(getPeakFreqChord())")
-//                .font(.title2.bold())
-//        }
+        HStack{
+            Text("Your\(type == 0 ? " Lowest" : " Highest") chord is : ")
+            Text("\(getPeakFreqChord())")
+                .font(.title2.bold())
+        }
        
         
         Button(

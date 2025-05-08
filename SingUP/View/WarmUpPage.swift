@@ -7,12 +7,13 @@
 import SwiftUI
 
 struct WarmUpPage:View{
-    
+    @Binding var path : NavigationPath
+
     var body: some View{
         VStack{
             List(listOfWarmUp) {warmUp in
                 NavigationLink {
-                    WarmUpGuideScreen(warmUp: warmUp)
+                    WarmUpGuideScreen(warmUp: warmUp, path : $path)
                 } label: {
                     HStack {
                         Image(warmUp.image)
@@ -39,8 +40,10 @@ struct WarmUpPage:View{
 }
 
 #Preview{
+    @Previewable @State var path = NavigationPath()
+
     NavigationStack{
-        WarmUpPage()
+        WarmUpPage(path : $path)
 
     }
 }
