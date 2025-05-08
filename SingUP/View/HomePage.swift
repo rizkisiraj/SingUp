@@ -57,6 +57,10 @@ struct HomePage:View{
                         
                         ScrollView(.horizontal, showsIndicators : false){
                             HStack(spacing : 20){
+                                VStack{
+                                   
+                                }
+                                .padding()
                                 ForEach(homeMenus, id : \.self){ menu in
                                     GroupBox{
                                         VStack{
@@ -103,10 +107,12 @@ struct HomePage:View{
                                             .stroke(menu.color, lineWidth : 1)
                                     )
                                     .frame(width : 300)
-                                    .padding(.leading, 50)
                                 }
                                 
-                                
+                                VStack{
+                                   
+                                }
+                                .padding()
                                 
                             }
                             

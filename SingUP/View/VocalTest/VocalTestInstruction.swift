@@ -21,6 +21,7 @@ struct VocalTestInstruction : View{
                 .resizable()
                 .frame(width: 300, height: 300)
                 .padding()
+                .offset(x : 20)
             
             Text("Discover your vocal range by singing 'Ahh' as the notes go higher and lower stop when you reach the highest or lowest note you can sing comfortably.   ")
                 .multilineTextAlignment(.center)

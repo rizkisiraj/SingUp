@@ -19,16 +19,19 @@ struct VocalTest: View {
     @State var octave = 1
     @Environment(\.modelContext) private var context
     @Query var userProfile : [UserProfile]
+    @State var isRecording = false
     
     
     func getPeakFreqChord() -> String{
-        print("\(peakFreq)  \(Int(detector.frequency)) \(type == 1 && Int(detector.frequency) > peakFreq) ")
-        if type == 0 && Int(detector.frequency) < peakFreq && Int(detector.frequency) > 60 {
-            peakFreq = Int(detector.frequency)
-        }
-        
-        if type == 1 && Int(detector.frequency) > peakFreq{
-            peakFreq = Int(detector.frequency)
+        if isRecording{
+            print("\(peakFreq)  \(Int(detector.frequency)) \(type == 1 && Int(detector.frequency) > peakFreq) ")
+            if type == 0 && Int(detector.frequency) < peakFreq && Int(detector.frequency) > 60 {
+                peakFreq = Int(detector.frequency)
+            }
+            
+            if type == 1 && Int(detector.frequency) > peakFreq{
+                peakFreq = Int(detector.frequency)
+            }
         }
         return "\(chord[  getChordByFrequency(freq : peakFreq)[0]  ])\( getChordByFrequency(freq : peakFreq)[1] )";
     }
@@ -49,22 +52,59 @@ struct VocalTest: View {
     
     
     var body: some View {
-        Text("Sing 'AHH' \n as \(type == 0 ? "Lowest" : "Highest") as u Can")
+        Text("Sing 'AHH'")
             .font(.title)
             .multilineTextAlignment(.center)
             .bold(true)
-            .padding()
-            .padding(.bottom, 100)
+        
+        HStack{
+            Text("as")
+                .font(.title)
+                .multilineTextAlignment(.center)
+                .bold(true)
+            
+            Text("\(type == 0 ? "Lowest" : "Highest")")
+                .font(.title)
+                .underline()
+                .foregroundStyle(type == 0 ? .blue : Color("Highest"))
+                .multilineTextAlignment(.center)
+                .bold(true)
+            
+            Text("as u Can")
+                .font(.title)
+                .multilineTextAlignment(.center)
+                .bold(true)
+        }
         
         
+        Button(action : {}){
+            Image(systemName: "arrowtriangle.\(type==0 ? "down" : "up").circle.fill")
+                .foregroundStyle(type == 0 ? .blue : Color("Highest"))
+
+            Text("Sing \(type==0 ? "Lower" : "Higher")")
+                .foregroundStyle(type == 0 ? .blue : Color("Highest"))
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 5)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(.clear)
+                .opacity(0.1)
+        )
+        .padding(.vertical, 0)
+        
+        Text("\(peakFreq < 99999 ? peakFreq : 0) Hz")
+                        .font(.title)
+                        .foregroundColor(type == 0 ?.blue : Color("Highest"))
+                        .padding(10)
         Image(systemName: "arrowtriangle.down.fill")
             .foregroundStyle(.purple)
             .font(.title.bold())
             .frame(maxWidth : .infinity, alignment : .center)
         
-//        Divider()
-//            .padding(.horizontal, 20)
-//        
+        Divider()
+            .padding(.horizontal, 20)
+        
         HStack(spacing : 0){
                 Text("\(chord[ (chord.count + getChord()[0]-2) % chord.count ])\(getChord()[1])")
                     .font(.title2)
@@ -98,31 +138,42 @@ struct VocalTest: View {
                 
             }
            
-//        Divider()
-//            .padding(.horizontal, 20)
-        
-        Text("\(peakFreq < 99999 ? peakFreq : 0) Hz")
-                        .font(.title)
-                        .foregroundColor(.blue)
-                        .padding()
-        Button(action : {}){
-            Image(systemName: "arrowtriangle.down.circle.fill")
-            Text("Go Lower")
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 5)
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(.gray)
-                .opacity(0.1)
-        )
-        HStack{
-            Text("Your\(type == 0 ? " Lowest" : " Highest") chord is : ")
-            Text("\(getPeakFreqChord())")
-                .font(.title2.bold())
-        }
+        Divider()
+            .padding(.horizontal, 20)
+            .padding(.bottom , 10)
        
         
+        Button(
+            action : {
+                print("Ended")
+                isRecording = false
+            }
+        ){
+            ZStack{
+                Circle()
+                    .stroke(lineWidth: 2)
+                    .foregroundStyle(.black)
+                    .frame(width: 100, height: 100)
+                    .backgroundStyle(isRecording ? .blue : .clear)
+
+                Image(systemName: "microphone.fill")
+                    .resizable()
+                    .frame(width: 30, height: 45)
+                    .foregroundStyle(.black)
+            }
+           
+        }
+        .simultaneousGesture(
+            LongPressGesture(minimumDuration: 0.2)
+                .onEnded { _ in
+                    isRecording = true
+                    print("Started")
+                }
+        )
+        
+        Text("Tap to record")
+        
+       
         Button(
             action : {
                 if let prof = userProfile.first{
@@ -149,10 +200,22 @@ struct VocalTest: View {
         .padding(15)
         .padding(.horizontal, 100)
         .background(
-            RoundedRectangle(cornerRadius: 10).fill(Color.blue)
+            RoundedRectangle(cornerRadius: 10)
+                .fill( ( (peakFreq == 0 || peakFreq == 99999) && !isRecording ) ? .gray :Color.blue)
         )
-        .padding(.top, 50)
+        .padding(.top, 10)
 
+        .disabled( ( (peakFreq == 0 || peakFreq == 99999) && !isRecording) )
+        
+        
+        
+        HStack{
+            Text("Your\(type == 0 ? " Lowest" : " Highest") chord is : ")
+            Text("\(getPeakFreqChord())")
+                .font(.title2.bold())
+        }
+        .opacity(0)
+       
         
     }
         
