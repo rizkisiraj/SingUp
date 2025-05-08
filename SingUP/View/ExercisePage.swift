@@ -7,56 +7,54 @@
 
 import SwiftUI
 
-
 struct ExercisePage: View {
+    var items = [
+        (systemIcon: "waveform", title: "Sustain", subtitle: "Long, steady notes", color: Color.red),
+        (systemIcon: "stairs", title: "Scale", subtitle: "Practice vocal range", color: Color.blue)
+    ]
+    
     var body: some View {
-        VStack{
-            Spacer()
-            Text("Vocal Exercise")
-                .font(.title.bold())
-                .frame(maxWidth : .infinity)
-                .padding(.vertical , 10)
-            
-            Text("Choose your exercise")
-                .font(.title3)
-                .padding(.bottom, 50)
-         
-            
-            GroupBox{
-                HStack{
-                    Image(systemName: "chart.line.flattrend.xyaxis")
-                        .font(.title)
-                        .padding()
-
-                    Text("Sustain" )
-                        .bold(true)
-                        .font(.title)
-                        .frame(maxWidth : .infinity, alignment : .leading)
+        List {
+            Section(header: Text("Choose Vocal Training")
+                        .font(.title2)
+                        .bold()
+                        .padding(.top, 8)
+                        .padding(.bottom, 8)) {
+                ForEach(items, id: \.title) { item in
+                    HStack {
+                        Image(systemName: item.systemIcon) // SF Symbol icon on the left
+                            .foregroundColor(item.color) // Apply specific color to each icon
+                            .frame(width: 24, height: 24)
+                        
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(item.title) // Title text
+                                .font(.headline)
+                            Text(item.subtitle) // Subtitle text
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right") // Chevron on the right
+                            .foregroundColor(.gray)
+                    }
+                    .padding(.vertical, 8)
                 }
-                
             }
-            .padding(.horizontal , 20)
-            
-            GroupBox{
-                HStack{
-                    Image(systemName: "arrow.down.left.arrow.up.right")
-                        .font(.title)
-                        .padding()
-                    
-                    Text("Scale")
-                        .bold(true)
-                        .font(.title)
-                        .frame(maxWidth : .infinity, alignment : .leading)
-                }
-               
-            }
-            .padding(.horizontal , 20)
-            
-            Spacer()
-            
         }
-        .toolbar{
-        
+        .navigationTitle("Vocal Exercise") // Inline mode centers the title in the navigation bar
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    print("Button tapped")
+                }) {
+                    Image(systemName: "info.circle.fill")
+                        .font(.system(size: 18))
+                        .foregroundColor(.black)
+                }
+            }
         }
     }
 }
