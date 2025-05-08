@@ -8,60 +8,44 @@
 import SwiftUI
 
 struct ExercisePage: View {
-    var items = [
-        (systemIcon: "waveform", title: "Sustain", subtitle: "Long, steady notes", color: Color.red),
-        (systemIcon: "stairs", title: "Scale", subtitle: "Practice vocal range", color: Color.blue)
-    ]
-    
-    var body: some View {
-        List {
-            Section(header: Text("Choose Vocal Training")
-                        .font(.title2)
-                        .bold()
-                        .padding(.top, 8)
-                        .padding(.bottom, 8)) {
-                ForEach(items, id: \.title) { item in
+    @Binding var path : NavigationPath
+
+    var body: some View{
+        VStack{
+            List(listOfExercise) {exercise in
+                NavigationLink {
+                    ExerciseGuideScreen(exercise: exercise, path : $path)
+                } label: {
                     HStack {
-                        Image(systemName: item.systemIcon) // SF Symbol icon on the left
-                            .foregroundColor(item.color) // Apply specific color to each icon
-                            .frame(width: 24, height: 24)
-                        
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(item.title) // Title text
-                                .font(.headline)
-                            Text(item.subtitle) // Subtitle text
+                        Image(exercise.image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 50)
+                        VStack(alignment: .leading) {
+                            Text(exercise.title)
+                                .font(.title3)
+                                .fontWeight(.bold)
+                            Text(exercise.shortDesc)
                                 .font(.subheadline)
-                                .foregroundColor(.gray)
+                                .foregroundStyle(.secondary)
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.leading)
                         
-                        Spacer()
-                        
-                        Image(systemName: "chevron.right") // Chevron on the right
-                            .foregroundColor(.gray)
                     }
-                    .padding(.vertical, 8)
+                    .padding(8)
                 }
             }
         }
-        .navigationTitle("Vocal Exercise") // Inline mode centers the title in the navigation bar
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
-                    print("Button tapped")
-                }) {
-                    Image(systemName: "info.circle.fill")
-                        .font(.system(size: 18))
-                        .foregroundColor(.black)
-                }
-            }
-        }
+        .navigationTitle("Warm Up")
     }
 }
 
 
 #Preview{
+    @Previewable @State var path = NavigationPath()
+
     NavigationStack{
-        ExercisePage()
+        ExercisePage(path : $path)
+
     }
 }

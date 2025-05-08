@@ -5,6 +5,7 @@
 //  Created by Muhammad Chandra Ramadhan on 03/05/25.
 //
 import Foundation
+
 class TaskRepeater {
     private var timer : DispatchSourceTimer?
     public var tasks : () -> Void = {}
