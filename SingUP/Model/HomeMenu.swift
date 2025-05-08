@@ -18,6 +18,6 @@ struct HomeMenu : Hashable {
 var homeMenus : [HomeMenu] = [
     HomeMenu(title : "Vocal Warm UP", path : "warmup", image : "VocalWarmUp", description : "Get your voice ready with quick and easy warm-ups to sing better, stronger, and safer.", color : Color("YellowWarmupCard")),
     HomeMenu(title : "Vocal Exercies", path : "exercise", image : "VocalExercise", description : "Get your voice ready with quick and easy warm-ups to sing better, stronger, and safer.", color : Color("RedExerciseCard")),
-    HomeMenu(title : "Re-Test Vocal Range", path : "vocaltest", image : "VocalTest", description : "Get your voice ready with quick and easy warm-ups to sing better, stronger, and safer.", color : Color("GreenVocalTestCard")),
+    HomeMenu(title : "Re-Test Vocal Range", path : "vtinstruction", image : "VocalTest", description : "Get your voice ready with quick and easy warm-ups to sing better, stronger, and safer.", color : Color("GreenVocalTestCard")),
     
     ]
