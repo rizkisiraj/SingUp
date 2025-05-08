@@ -16,6 +16,7 @@ class FrequencyDetector: ObservableObject {
     var lastFrequency: Float = 0.0
     let alpha: Float = 0.25
     private var fftSetup: FFTSetup?
+    public var useFilter = false
     
     @Published var frequency: Float = 0.0
 
@@ -96,12 +97,20 @@ class FrequencyDetector: ObservableObject {
                     if maxMagnitude > 200.0 {
                         let sampleRate = Float(buffer.format.sampleRate)
                         let freq = sampleRate * Float(maxIndex) / Float(fftSize)
-                        DispatchQueue.main.async {
-                            // Apply low-pass smoothing
-                            let smoothed = self.lastFrequency + self.alpha * (freq - self.lastFrequency)
-                            self.lastFrequency = smoothed
-                            self.frequency = smoothed
+                        if useFilter{
+                            DispatchQueue.main.async {
+                                // Apply low-pass smoothing
+                                let smoothed = self.lastFrequency + self.alpha * (freq - self.lastFrequency)
+                                self.lastFrequency = smoothed
+                                self.frequency = smoothed
+                            }
+                        }else{
+                            DispatchQueue.main.async {
+                                // Apply low-pass smoothing
+                                self.frequency = freq
+                            }
                         }
+                        
                     } else {
                         DispatchQueue.main.async {
                             self.frequency = 0.0

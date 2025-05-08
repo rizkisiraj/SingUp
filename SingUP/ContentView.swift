@@ -20,7 +20,7 @@ struct ContentView: View {
                 if route == "warmup" {
                     WarmUpPage(path : $path)
                 } else if route == "exercise" {
-                    ExercisePage()
+                    ExercisePage(path : $path)
                 } else if route == "vocaltest"{
                     GenderSelection(path: $path)
                         .modelContainer(for : [UserProfile.self])
