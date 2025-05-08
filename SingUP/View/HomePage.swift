@@ -57,152 +57,57 @@ struct HomePage:View{
                         
                         ScrollView(.horizontal, showsIndicators : false){
                             HStack(spacing : 20){
-                                GroupBox{
-                                    VStack{
-                                       
-                                        Text("Vocal WarmUp")
-                                            .multilineTextAlignment(.center)
-                                            .font(.title.bold())
-                                            .frame(maxWidth : .infinity, alignment : .center)
-                                            .padding(.vertical, 20)
-                                            .padding(.horizontal, 10)
-                                        
-                                        Image("VocalWarmUp")
-                                            .resizable()
-                                            .frame(width : 180, height : 180)
-                                        
-                                        Text("Get your voice ready with quick and easy warm-ups to sing better, stronger, and safer.")
-                                            .multilineTextAlignment(.center)
-                                            .font(.caption)
-                                            .padding(.horizontal, 20)
-                                            .frame(maxWidth : .infinity, maxHeight : .infinity)
-                                        
-                                        
-                                        Button(
-                                            action : {
-                                                path.append("warmup")
-                                            }
-                                        ){
-                                            Text("Start")
-                                                .foregroundStyle(.white)
-                                                .frame(maxWidth : .infinity)
-                                        }
-                                        .padding(.vertical, 10)
-                                        .background(Color("YellowWarmupCard"))
-                                        .cornerRadius(10)
-                                        .padding()
-                                    }
-                                    
-                                    
-                                }
-                                .backgroundStyle(Color.clear)
-                                .background(
-                                    RoundedRectangle(cornerRadius : 10)
-                                        .fill(Color("YellowWarmupCard").opacity(0.1))
-                                        .stroke(Color("YellowWarmupCard"), lineWidth : 1)
-                                )
-                                .frame(width : 300)
-                                .padding(.leading, 50)
-                                
-                                GroupBox{
-                                    VStack{
-                                       
-                                        Text("Vocal Exercise")
-                                            .multilineTextAlignment(.center)
-                                            .font(.title.bold())
-                                            .frame(maxWidth : .infinity, alignment : .center)
-                                            .padding(.vertical, 20)
-                                            .padding(.horizontal, 10)
-                                        
-                                        Image("VocalExercise")
-                                            .resizable()
-                                            .frame(width : 180, height : 180)
-                                        
-                                        Text("Get your voice ready with quick and easy warm-ups to sing better, stronger, and safer.")
-                                            .multilineTextAlignment(.center)
-                                            .font(.caption)
-                                            .padding(.horizontal, 20)
-                                            .frame(maxWidth : .infinity, maxHeight : .infinity)
-                                        
-                                        
-                                        Button(
-                                            action : {
-                                                path.append("exercise")
-                                            }
-                                        ){
-                                            Text("Start")
-                                                .foregroundStyle(.white)
-                                                .frame(maxWidth : .infinity)
-                                        }
-                                        .padding(.vertical, 10)
-                                        .background(Color("RedExerciseCard"))
-                                        .cornerRadius(10)
-                                        .padding()
-                                    }
-                                    
-                                    
-                                }
-                                .backgroundStyle(Color.clear)
-                                .background(
-                                    RoundedRectangle(cornerRadius : 10)
-                                        .fill(Color("RedExerciseCard").opacity(0.1))
-                                        .stroke(Color("RedExerciseCard"), lineWidth : 1)
-                                )
-                                .frame(width : 300)
-                                
-
-                                GroupBox{
-                                    VStack{
-                                       
-                                        Text("Re-Test Vocal Range")
-                                            .multilineTextAlignment(.center)
-                                            .font(.title.bold())
-                                            .frame(maxWidth : .infinity, alignment : .center)
-                                            .padding(.vertical, 20)
-                                            .padding(.horizontal, 10)
-                                        
-                                        Image("VocalTest")
-                                            .resizable()
-                                            .frame(width : 180, height : 180)
-                                        
-                                        Text("Get your voice ready with quick and easy warm-ups to sing better, stronger, and safer.")
-                                            .multilineTextAlignment(.center)
-                                            .font(.caption)
-                                            .padding(.horizontal, 20)
-                                            .frame(maxWidth : .infinity, maxHeight : .infinity)
-                                        
-                                        
-                                        Button(
-                                            action : {
-                                                if let user = userProfile.first{
-                                                    print(user.gender)
-                                                    if user.gender == "Male" || user.gender == "Female"{
-                                                        path.append("vtinstruction")
-                                                        return;
-                                                    }
-                                                    path.append("vocaltest")
+                                ForEach(homeMenus, id : \.self){ menu in
+                                    GroupBox{
+                                        VStack{
+                                           
+                                            Text(menu.title)
+                                                .multilineTextAlignment(.center)
+                                                .font(.title.bold())
+                                                .frame(maxWidth : .infinity, alignment : .center)
+                                                .padding(.vertical, 20)
+                                                .padding(.horizontal, 10)
+                                            
+                                            Image(menu.image)
+                                                .resizable()
+                                                .frame(width : 180, height : 180)
+                                            
+                                            Text(menu.description)
+                                                .multilineTextAlignment(.center)
+                                                .font(.caption)
+                                                .padding(.horizontal, 20)
+                                                .frame(maxWidth : .infinity, maxHeight : .infinity)
+                                            
+                                            
+                                            Button(
+                                                action : {
+                                                    path.append(menu.path)
                                                 }
+                                            ){
+                                                Text("Start")
+                                                    .foregroundStyle(.white)
+                                                    .frame(maxWidth : .infinity)
                                             }
-                                        ){
-                                            Text("Start")
-                                                .foregroundStyle(.white)
-                                                .frame(maxWidth : .infinity)
+                                            .padding(.vertical, 10)
+                                            .background(menu.color)
+                                            .cornerRadius(10)
+                                            .padding()
                                         }
-                                        .padding(.vertical, 10)
-                                        .background(Color("GreenVocalTestCard"))
-                                        .cornerRadius(10)
-                                        .padding()
+                                        
+                                        
                                     }
-                                
+                                    .backgroundStyle(Color.clear)
+                                    .background(
+                                        RoundedRectangle(cornerRadius : 10)
+                                            .fill(menu.color.opacity(0.1))
+                                            .stroke(menu.color, lineWidth : 1)
+                                    )
+                                    .frame(width : 300)
+                                    .padding(.leading, 50)
                                 }
-                                .backgroundStyle(Color.clear)
-                                .background(
-                                    RoundedRectangle(cornerRadius : 10)
-                                        .fill(Color("GreenVocalTestCard").opacity(0.1))
-                                        .stroke(Color("GreenVocalTestCard"), lineWidth : 1)
-                                )
-                                .frame(width : 300)
-                                .padding(.trailing, 50)
+                                
+                                
+                                
                             }
                             
                             
