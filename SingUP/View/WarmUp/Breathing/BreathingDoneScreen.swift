@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct BreathingDoneScreen: View {
+    @Binding var path: NavigationPath
+    
     var body: some View {
         VStack(alignment: .center) {
             Spacer()
@@ -20,7 +22,7 @@ struct BreathingDoneScreen: View {
             Image(.breathDoneIcon)
             Spacer()
             Button {
-                
+                path.removeLast(path.count)
             } label: {
                 Text("Continue")
                     .fontWeight(.semibold)
@@ -35,14 +37,14 @@ struct BreathingDoneScreen: View {
             Spacer()
         }
         .padding()
-        Text("Siraj")
+        .navigationBarBackButtonHidden(true)
     }
     
 }
 
 
-struct BreathingDone_Previews: PreviewProvider {
-    static var previews: some View {
-        BreathingDoneScreen()
-    }
-}
+//struct BreathingDone_Previews: PreviewProvider {
+//    static var previews: some View {
+//        BreathingDoneScreen(.constant())
+//    }
+//}
