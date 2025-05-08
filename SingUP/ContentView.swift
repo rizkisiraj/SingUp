@@ -17,38 +17,44 @@ struct ContentView: View {
             HomePage(path : $path)
                 .modelContainer(for : [UserProfile.self])
             .navigationDestination(for : String.self){ route in
-                if route == "warmup" {
+                
+                switch(route){
+                case "warmup":
                     WarmUpPage(path : $path)
-                } else if route == "exercise" {
+                case "exercise" :
                     ExercisePage(path : $path)
-                } else if route == "vocaltest"{
+                case "vocaltest" :
                     GenderSelection(path: $path)
                         .modelContainer(for : [UserProfile.self])
-                } else if route == "vtinstruction"{
+                case "vtinstruction" :
                     VocalTestInstruction(path : $path)
-                } else if route == "vtest1"{
+                case "vtest1":
                     VocalTest(path : $path)
                         .modelContainer(for : [UserProfile.self])
-                } else if route == "vtest2"{
+                case "vtest2":
                     VocalTest(path : $path, type : 1)
                         .modelContainer(for : [UserProfile.self])
-                } else if route == "vocalresult"{
+                case "vocalresult":
                     VocalResult(path : $path)
                         .modelContainer(for : [UserProfile.self])
-                } else if route == "humming"{
+                case "humming":
                     WarmUpSessionScreen()
                         .modelContainer(for : [UserProfile.self])
-                } else if route == "liptrills"{
+                case "liptrills":
                     WarmUpSessionScreen()
                         .modelContainer(for : [UserProfile.self])
-                } else if route == "tonguetrill"{
+                case "tonguetrill":
                     WarmUpSessionScreen()
                         .modelContainer(for : [UserProfile.self])
-                } else{
-                    //Mic()
+                case "breathing":
+                    BreathingView()
+                default:
                     HomePage(path : $path)
                         .modelContainer(for : [UserProfile.self])
                 }
+                
+                
+            
                 
                 
             }

@@ -45,13 +45,7 @@ struct WarmUpSessionScreen: View {
    
    var body: some View {
        VStack {
-           HStack {
-               Button("Exit") {
-                   // Action for exit
-               }
-               .padding(.leading)
-               Spacer()
-           }
+        
            
            Text("Lip Trills")
                .font(.headline)
@@ -154,7 +148,7 @@ struct WarmUpSessionScreen: View {
            .padding([.leading, .trailing, .bottom])
        }
        .onAppear(){
-           repeater.interval = 10
+           repeater.interval = 5
            repeater.tasks = changePos
            
            repeater.start()
