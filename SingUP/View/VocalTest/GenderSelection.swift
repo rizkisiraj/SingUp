@@ -24,15 +24,18 @@ struct GenderSelection : View{
                 HStack{
                     Image(systemName: "person.fill")
                         .font(.title)
+                        .foregroundStyle(.white)
 
-                    Text("Male")
+                    Text("MALE")
                         .font(.title)
-                        .frame(maxWidth : .infinity)
-                    
+                        .foregroundStyle(.white)
+
                 }
-                .padding(.vertical, 10)
+                .padding(.vertical, 20)
+                .frame(maxWidth : .infinity)
 
             }
+            .backgroundStyle(.black)
             .padding(.horizontal, 50)
             .onTapGesture {
                 if let user = userProfile.first{
@@ -46,19 +49,24 @@ struct GenderSelection : View{
                 }
                 path.append("vtinstruction")
             }
+            .padding(.bottom, 50)
             
             GroupBox{
                 HStack{
                     Image(systemName: "person.fill")
                         .font(.title)
+                        .foregroundStyle(.white)
 
-                    Text("Female")
+
+                    Text("FEMALE")
                         .font(.title)
-                        .frame(maxWidth : .infinity)
+                        .foregroundStyle(.white)
                 }
-                .padding(.vertical, 10)
+                .padding(.vertical, 20)
+                .frame(maxWidth : .infinity)
 
             }
+            .backgroundStyle(.black)
             .padding(.horizontal, 50)
             .onTapGesture {
                 if let user = userProfile.first{
@@ -73,6 +81,7 @@ struct GenderSelection : View{
                 }
                 path.append("vtinstruction")
             }
+            
         }
        
         
@@ -85,6 +94,6 @@ struct GenderSelection : View{
 #Preview{
     @Previewable @State var path = NavigationPath()
 
-    //GenderSelection(path : $path)
-    ContentView()
+    GenderSelection(path : $path)
+    //ContentView()
 }

@@ -73,13 +73,15 @@ struct VocalResult: View {
             path = NavigationPath()
         }) {
             Text("Finish")
-                .foregroundColor(.white)
                 .padding()
+                .frame(maxWidth : .infinity)
+                .foregroundColor(.white)
                 .bold(true)
-                .frame(width: 200, height: 50)
                 .background(Color.blue)
                 .cornerRadius(10)
+            
         }
+        .padding(.horizontal, 50)
         .onAppear{
             if let prof = userProfile.first{
                 freq = [Int(prof.lowestFrequency), Int(prof.highestFrequency)]

@@ -13,7 +13,8 @@ class FrequencyDetector: ObservableObject {
     private var audioEngine = AVAudioEngine()
     private var inputNode: AVAudioInputNode!
     private let fftSize: Int = 2048
-    
+    var lastFrequency: Float = 0.0
+    let alpha: Float = 0.25
     private var fftSetup: FFTSetup?
     
     @Published var frequency: Float = 0.0
@@ -59,7 +60,7 @@ class FrequencyDetector: ObservableObject {
 
 
     func analyzeBuffer(buffer: AVAudioPCMBuffer) {
-        let channelData = buffer.floatChannelData?[0];
+        let channelData = buffer.floatChannelData?[0]
         let frameCount = Int(buffer.frameLength)
         let channelArray = Array(UnsafeBufferPointer(start: channelData, count: fftSize))
 
@@ -69,8 +70,10 @@ class FrequencyDetector: ObservableObject {
                                  isHalfWindow: false)
         var windowedSignal = [Float](repeating: 0.0, count: fftSize)
         vDSP.multiply(channelArray, window, result: &windowedSignal)
+
         var real = [Float](repeating: 0.0, count: fftSize / 2)
         var imag = [Float](repeating: 0.0, count: fftSize / 2)
+
         real.withUnsafeMutableBufferPointer { realPtr in
             imag.withUnsafeMutableBufferPointer { imagPtr in
                 var splitComplex = DSPSplitComplex(realp: realPtr.baseAddress!, imagp: imagPtr.baseAddress!)
@@ -89,12 +92,15 @@ class FrequencyDetector: ObservableObject {
 
                 if let maxMagnitude = magnitudes.max(),
                    let maxIndex = magnitudes.firstIndex(of: maxMagnitude) {
-                    
+
                     if maxMagnitude > 200.0 {
                         let sampleRate = Float(buffer.format.sampleRate)
                         let freq = sampleRate * Float(maxIndex) / Float(fftSize)
                         DispatchQueue.main.async {
-                            self.frequency = freq
+                            // Apply low-pass smoothing
+                            let smoothed = self.lastFrequency + self.alpha * (freq - self.lastFrequency)
+                            self.lastFrequency = smoothed
+                            self.frequency = smoothed
                         }
                     } else {
                         DispatchQueue.main.async {
@@ -102,10 +108,10 @@ class FrequencyDetector: ObservableObject {
                         }
                     }
                 }
-
             }
         }
     }
+
 
     deinit {
         inputNode.removeTap(onBus: 0)
