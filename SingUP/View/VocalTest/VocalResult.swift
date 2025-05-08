@@ -25,54 +25,36 @@ struct VocalResult: View {
     }
 
     var body: some View {
-        Text("Your vocal range is : ")
+        Text("AMAZING!")
             .multilineTextAlignment(.center)
-            .font(.title)
-            .padding(5)
+            .font(.largeTitle.bold())
         
-        Text(vocalRange.getVocalType(lowFreq: freq[0], highFreq: freq[1]))
-                    .multilineTextAlignment(.center)
-                    .font(.largeTitle)
-                    .bold(true)
-                
-        HStack(spacing : 0){
-            VStack(spacing : 20){
-                ForEach(Array(vocalRange.range.reversed().enumerated()), id: \.offset) { index, item in
-                    Text(item)
-                        .foregroundStyle(( ((vocalRange.range.count - 1) - index ) == vocalRange.getVocalTypeIndex(lowFreq: freq[0], highFreq: freq[1]) ) ? .blue : .gray )
-                }
-            }
-            
-            VStack(spacing : 5){
-                Text("Highest")
-                    .font(.title3.bold())
-                    .padding(.vertical, 20)
-
-                ForEach(0..<24){ index in
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill( getRange(idx : index) ? .blue : .gray)
-                        .frame(maxWidth : 30, maxHeight: 5)
-                }
-               
-                Text("Lowest")
-                    .font(.title3.bold())
-                    .padding(.vertical, 20)
-            }
-        }
-        .padding(.trailing, 60)
-
+        Text("You are a")
+            .multilineTextAlignment(.center)
+            .font(.title.bold())
+            .foregroundStyle(.gray)
         
+      
+        Image(vocalRange.getVocalType(lowFreq: freq[0], highFreq: freq[1]))
+            .resizable()
+            .frame(width: 230, height: 230)
+            .padding(0)
         
-//        Text(vocalRange.getVocalType(lowFreq: freq[0], highFreq: freq[1]))
-//            .multilineTextAlignment(.center)
-//            .font(.largeTitle)
-//            .bold(true)
-//            .padding(.bottom , 50)
-//        
+        Text(vocalRange.getVocalType(lowFreq: freq[0], highFreq: freq[1]).uppercased())
+            .multilineTextAlignment(.center)
+            .font(.largeTitle)
+            .bold(true)
+        
+        Text("\(getChordString(frequency : freq[0])) - \(getChordString(frequency : freq[1]))")
+              .multilineTextAlignment(.center)
+              .font(.title2)
+              .bold(true)
+              .padding(.bottom, 20)
+//
         Button(action: {
             path = NavigationPath()
         }) {
-            Text("Finish")
+            Text("Done")
                 .padding()
                 .frame(maxWidth : .infinity)
                 .foregroundColor(.white)

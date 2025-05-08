@@ -67,5 +67,5 @@ func getChordByFrequency(freq : Int) -> [Int] {
 
 func getChordString(frequency : Int)->String{
     
-    return "\(chord[getChordByFrequency(freq: frequency)[0]]) \(getChordByFrequency(freq: frequency)[1])";
+    return "\(chord[getChordByFrequency(freq: frequency)[0]])\(getChordByFrequency(freq: frequency)[1])";
 }
