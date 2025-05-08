@@ -18,7 +18,6 @@ struct HomePage:View{
     
     var body: some View{
         VStack{
-            
             if page == 0 {
                 ScrollView{
                     VStack(alignment : .leading, spacing : 0){
