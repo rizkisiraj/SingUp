@@ -28,7 +28,7 @@ struct HomePage:View{
                             .bold(true)
                             .frame(maxWidth : .infinity, alignment : .center)
                             .padding(.bottom , 10)
-                            .padding(.top, 50)
+                            .padding(.top, 20)
                         
                         GroupBox{
                             Text(vocalRange.getVocalType(lowFreq: freq[0], highFreq: freq[1]).uppercased())
@@ -55,8 +55,8 @@ struct HomePage:View{
                         .padding(.vertical, 20)
                         
                         
-                        ScrollView(.horizontal){
-                            HStack{
+                        ScrollView(.horizontal, showsIndicators : false){
+                            HStack(spacing : 20){
                                 GroupBox{
                                     VStack{
                                        
@@ -80,7 +80,7 @@ struct HomePage:View{
                                         
                                         Button(
                                             action : {
-                                                
+                                                path.append("warmup")
                                             }
                                         ){
                                             Text("Start")
@@ -88,7 +88,7 @@ struct HomePage:View{
                                                 .frame(maxWidth : .infinity)
                                         }
                                         .padding(.vertical, 10)
-                                        .background(.black)
+                                        .background(Color("YellowWarmupCard"))
                                         .cornerRadius(10)
                                         .padding()
                                     }
@@ -102,55 +102,115 @@ struct HomePage:View{
                                         .stroke(Color("YellowWarmupCard"), lineWidth : 1)
                                 )
                                 .frame(width : 300)
-                                .onTapGesture {
-                                    path.append("warmup")
-                                }
                                 .padding(.leading, 50)
                                 
                                 GroupBox{
                                     VStack{
-                                        Image(systemName : "music.microphone")
-                                            .font(.title)
-                                            .padding(.leading, 10)
-                                        
-                                        Text("Vocal Excercise")
-                                            .multilineTextAlignment(.leading)
-                                            .font(.title2)
-                                            .bold(true)
-                                            .frame(maxWidth : .infinity, alignment : .leading)
+                                       
+                                        Text("Vocal Exercise")
+                                            .multilineTextAlignment(.center)
+                                            .font(.title.bold())
+                                            .frame(maxWidth : .infinity, alignment : .center)
                                             .padding(.vertical, 20)
                                             .padding(.horizontal, 10)
+                                        
+                                        Image("VocalExercise")
+                                            .resizable()
+                                            .frame(width : 180, height : 180)
+                                        
+                                        Text("Get your voice ready with quick and easy warm-ups to sing better, stronger, and safer.")
+                                            .multilineTextAlignment(.center)
+                                            .font(.caption)
+                                            .padding(.horizontal, 20)
+                                            .frame(maxWidth : .infinity, maxHeight : .infinity)
+                                        
+                                        
+                                        Button(
+                                            action : {
+                                                path.append("exercise")
+                                            }
+                                        ){
+                                            Text("Start")
+                                                .foregroundStyle(.white)
+                                                .frame(maxWidth : .infinity)
+                                        }
+                                        .padding(.vertical, 10)
+                                        .background(Color("RedExerciseCard"))
+                                        .cornerRadius(10)
+                                        .padding()
                                     }
                                     
+                                    
                                 }
-                                .padding(.horizontal, 20)
-                                .onTapGesture {
-                                    path.append("exercise")
+                                .backgroundStyle(Color.clear)
+                                .background(
+                                    RoundedRectangle(cornerRadius : 10)
+                                        .fill(Color("RedExerciseCard").opacity(0.1))
+                                        .stroke(Color("RedExerciseCard"), lineWidth : 1)
+                                )
+                                .frame(width : 300)
+                                
+
+                                GroupBox{
+                                    VStack{
+                                       
+                                        Text("Re-Test Vocal Range")
+                                            .multilineTextAlignment(.center)
+                                            .font(.title.bold())
+                                            .frame(maxWidth : .infinity, alignment : .center)
+                                            .padding(.vertical, 20)
+                                            .padding(.horizontal, 10)
+                                        
+                                        Image("VocalTest")
+                                            .resizable()
+                                            .frame(width : 180, height : 180)
+                                        
+                                        Text("Get your voice ready with quick and easy warm-ups to sing better, stronger, and safer.")
+                                            .multilineTextAlignment(.center)
+                                            .font(.caption)
+                                            .padding(.horizontal, 20)
+                                            .frame(maxWidth : .infinity, maxHeight : .infinity)
+                                        
+                                        
+                                        Button(
+                                            action : {
+                                                if let user = userProfile.first{
+                                                    print(user.gender)
+                                                    if user.gender == "Male" || user.gender == "Female"{
+                                                        path.append("vtinstruction")
+                                                        return;
+                                                    }
+                                                    path.append("vocaltest")
+                                                }
+                                            }
+                                        ){
+                                            Text("Start")
+                                                .foregroundStyle(.white)
+                                                .frame(maxWidth : .infinity)
+                                        }
+                                        .padding(.vertical, 10)
+                                        .background(Color("GreenVocalTestCard"))
+                                        .cornerRadius(10)
+                                        .padding()
+                                    }
+                                
                                 }
+                                .backgroundStyle(Color.clear)
+                                .background(
+                                    RoundedRectangle(cornerRadius : 10)
+                                        .fill(Color("GreenVocalTestCard").opacity(0.1))
+                                        .stroke(Color("GreenVocalTestCard"), lineWidth : 1)
+                                )
+                                .frame(width : 300)
+                                .padding(.trailing, 50)
                             }
+                            
+                            
                             
                         }
                         .padding(.top, 30)
                         
-                        
-                        
-                        Button(action :  {
-                            if let user = userProfile.first{
-                                print(user.gender)
-                                if user.gender == "Male" || user.gender == "Female"{
-                                    path.append("vtinstruction")
-                                    return;
-                                }
-                                path.append("vocaltest")
-                            }
-                            
-                        }){
-                            Image(systemName: "arrow.clockwise")
-                                .font(.title2)
-                            Text("Re-Test Your Range")
-                        }
-                        .frame(maxWidth : .infinity, alignment : .center)
-                        .padding(.vertical , 50)
+                       
                         
                     }
                 }
@@ -158,7 +218,7 @@ struct HomePage:View{
                     if let prof = userProfile.first{
                         freq = [Int(prof.lowestFrequency), Int(prof.highestFrequency)]
                     }else{
-                        var newProf = UserProfile(
+                        let newProf = UserProfile(
                             gender : "-",
                             lowestFrequency: 0,
                             highestFrequency: 0
