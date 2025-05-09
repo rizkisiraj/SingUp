@@ -153,6 +153,7 @@ struct VocalTest: View {
         Button(
             action : {
                 print("Ended")
+                    
                 isRecording = false
                 if let prof = userProfile.first{
                     if type == 0 {
@@ -195,7 +196,9 @@ struct VocalTest: View {
         )
         .padding(.top, 30)
         
-        Text("Hold to record")
+        Text("Hold to record \nand release when you done")
+            .multilineTextAlignment(.center)
+            .padding(.top, 10)
         
        
 //        Button(
