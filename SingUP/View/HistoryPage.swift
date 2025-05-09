@@ -18,8 +18,29 @@ struct ValuePoint: Identifiable {
 // Line Chart View
 struct LineChartView: View {
     let values: [Int]
+    enum Exercise : String, CaseIterable, Identifiable{
+        case sustain
+        case scale
+        var id : Self {self}
+    }
+    
+    @State var selectedExercise: Exercise = .sustain
     
     var body: some View {
+        
+        Text("History")
+            .font(.largeTitle.bold())
+        
+        Picker("Exercise", selection: $selectedExercise ){
+            Text("Sustain")
+                .tag(Exercise.sustain)
+            Text("Scale")
+                .tag(Exercise.scale)
+            
+        }
+        .pickerStyle(SegmentedPickerStyle())
+        .padding()
+        
         // Create data points with index starting from 1
         let dataPoints = values.enumerated().map { ValuePoint(index: $0.offset + 1, value: $0.element) }
         
@@ -32,7 +53,7 @@ struct LineChartView: View {
             .interpolationMethod(.catmullRom)
             .foregroundStyle(
                 LinearGradient(
-                    gradient: Gradient(colors: [Color.blue.opacity(0.3), Color.blue.opacity(0.0)]),
+                    gradient: Gradient(colors: [selectedExercise == .scale ? Color.blue.opacity(0.3) : Color.green.opacity(0.3), selectedExercise == .scale ? Color.blue.opacity(0.0) : Color.green.opacity(0.0)]),
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -44,7 +65,7 @@ struct LineChartView: View {
                 y: .value("Value", point.value)
             )
             .interpolationMethod(.catmullRom)
-            .foregroundStyle(.blue)
+            .foregroundStyle(selectedExercise == .scale ? Color.blue : Color.green)
             .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round))
             
             // Dot at each point
@@ -52,11 +73,11 @@ struct LineChartView: View {
                 x: .value("Index", point.index),
                 y: .value("Value", point.value)
             )
-            .foregroundStyle(.blue)
+            .foregroundStyle(selectedExercise == .scale ? Color.blue : Color.green)
             .annotation(position: .top) {
                 Text("\(point.value)")
                     .font(.caption2)
-                    .foregroundColor(.blue)
+                    .foregroundColor(selectedExercise == .scale ? Color.blue : Color.green)
             }
         }
         // Custom X-axis labels
@@ -77,26 +98,53 @@ struct LineChartView: View {
         }
         .chartYScale(domain: 0...100)
         .chartXScale(domain: 1...values.count)
-        .frame(height: 300)
+        .frame(height: 250)
         .padding()
         
         // Native List Below Chart
         HStack {
-            Text("Attempt")
+            Text("Exercise")
+                .font(.title2.bold())
             Spacer()
             Text("Accuracy")
+                .font(.title2.bold())
+
         }
         .padding()
-        List(dataPoints) { point in
-            HStack {
-                Text("\(point.index).")
-                Spacer()
-                Text("Date")
-                Spacer()
-                Text("\(point.value) %")
+        
+        ScrollView{
+            ForEach(dataPoints) { point in
+                HStack {
+                    Image(selectedExercise == .scale ? "ScaleExercise" : "SustainExercise")
+                    Spacer()
+                    
+                    VStack{
+                        Text(selectedExercise == .scale ? "ScaleExercise" : "SustainExercise")
+                            .font(.title2.bold())
+                            .foregroundStyle(selectedExercise == .scale ? .blue : .green)
+                            .frame(maxWidth : .infinity, alignment : .leading)
+                        
+                        Text("Percobaan : \(point.index)")
+                            .frame(maxWidth : .infinity, alignment : .leading)
+                        
+                    }
+                   
+                    Spacer()
+                    VStack{
+                        Text("\(point.value)%")
+                            .font(.title.bold())
+                        Text("Accuracy")
+                    }
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius : 10)
+                        .fill(selectedExercise == .scale ? .blue.opacity(0.1) : .green.opacity(0.1))
+                )
+                .padding(.horizontal, 20)
             }
         }
-        .listStyle(.plain) // Optional: cleaner look
+       
     }
 }
 
