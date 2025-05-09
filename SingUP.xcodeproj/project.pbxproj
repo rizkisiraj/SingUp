@@ -7,29 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7E7156432DCDAB21006B80C3 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 7E7156422DCDAB21006B80C3 /* Lottie */; };
+		088DE2B32DCDE9E3001DB807 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 088DE2B22DCDE9E3001DB807 /* Lottie */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		08DE93CE2DC1069D00089B3F /* SingUP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SingUP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		086AE8F62DC7B112009CEAA3 /* Exceptions for "SingUP" folder in "SingUP" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 08DE93CD2DC1069D00089B3F /* SingUP */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		08DE93D02DC1069D00089B3F /* SingUP */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				086AE8F62DC7B112009CEAA3 /* Exceptions for "SingUP" folder in "SingUP" target */,
-			);
 			path = SingUP;
 			sourceTree = "<group>";
 		};
@@ -40,7 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7E7156432DCDAB21006B80C3 /* Lottie in Frameworks */,
+				088DE2B32DCDE9E3001DB807 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,7 +70,7 @@
 			);
 			name = SingUP;
 			packageProductDependencies = (
-				7E7156422DCDAB21006B80C3 /* Lottie */,
+				088DE2B22DCDE9E3001DB807 /* Lottie */,
 			);
 			productName = SingUP;
 			productReference = 08DE93CE2DC1069D00089B3F /* SingUP.app */;
@@ -114,7 +101,7 @@
 			mainGroup = 08DE93C52DC1069D00089B3F;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				7E7156412DCDAB21006B80C3 /* XCRemoteSwiftPackageReference "lottie-spm" */,
+				088DE2B12DCDE9E3001DB807 /* XCRemoteSwiftPackageReference "lottie-spm" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 08DE93CF2DC1069D00089B3F /* Products */;
@@ -277,7 +264,6 @@
 				DEVELOPMENT_TEAM = 5S8FM9N45F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = SingUP/Info.plist;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Kami memerlukan akses mikrofon untuk mendeteksi frekuensi suara.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -308,7 +294,6 @@
 				DEVELOPMENT_TEAM = 5S8FM9N45F;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = SingUP/Info.plist;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Kami memerlukan akses mikrofon untuk mendeteksi frekuensi suara.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -352,7 +337,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		7E7156412DCDAB21006B80C3 /* XCRemoteSwiftPackageReference "lottie-spm" */ = {
+		088DE2B12DCDE9E3001DB807 /* XCRemoteSwiftPackageReference "lottie-spm" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-spm.git";
 			requirement = {
@@ -363,9 +348,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		7E7156422DCDAB21006B80C3 /* Lottie */ = {
+		088DE2B22DCDE9E3001DB807 /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 7E7156412DCDAB21006B80C3 /* XCRemoteSwiftPackageReference "lottie-spm" */;
+			package = 088DE2B12DCDE9E3001DB807 /* XCRemoteSwiftPackageReference "lottie-spm" */;
 			productName = Lottie;
 		};
 /* End XCSwiftPackageProductDependency section */
