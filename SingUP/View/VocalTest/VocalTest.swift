@@ -75,6 +75,13 @@ struct VocalTest: View {
                 .multilineTextAlignment(.center)
                 .bold(true)
         }
+        .onDisappear(perform: {
+            
+          if type == 1{
+              detector.stop()
+          }
+                }
+         )
         
         
         Button(action : {}){
@@ -96,7 +103,7 @@ struct VocalTest: View {
         Text("\(peakFreq < 99999 ? peakFreq : 0) Hz")
                         .font(.title)
                         .foregroundColor(type == 0 ?.blue : Color("Highest"))
-                        .padding(10)
+                        .padding(20)
         Image(systemName: "arrowtriangle.down.fill")
             .foregroundStyle(.purple)
             .font(.title.bold())
@@ -147,6 +154,22 @@ struct VocalTest: View {
             action : {
                 print("Ended")
                 isRecording = false
+                if let prof = userProfile.first{
+                    if type == 0 {
+                        prof.lowestFrequency = Float(peakFreq)
+                    } else {
+                        prof.highestFrequency = Float(peakFreq)
+                    }
+                    do{
+                        try context.save()
+                        print("Berhasil menyimpan hasil test")
+
+                    }catch{
+                        print("Gagal menyimpan hasil test \(error)")
+                    }
+                }
+//
+                path.append(type == 0 ? "vtest2" : "vocalresult")
             }
         ){
             ZStack{
@@ -170,42 +193,28 @@ struct VocalTest: View {
                     print("Started")
                 }
         )
+        .padding(.top, 30)
         
-        Text("Tap to record")
+        Text("Hold to record")
         
        
-        Button(
-            action : {
-                if let prof = userProfile.first{
-                    if type == 0 {
-                        prof.lowestFrequency = Float(peakFreq)
-                    } else {
-                        prof.highestFrequency = Float(peakFreq)
-                    }
-                    do{
-                        try context.save()
-                        print("Berhasil menyimpan hasil test")
-
-                    }catch{
-                        print("Gagal menyimpan hasil test \(error)")
-                    }
-                }
-//                path.removeLast(1)
-                path.append(type == 0 ? "vtest2" : "vocalresult")
-            }
-        ){
-            Text("Continue")
-                .foregroundStyle(.white)
-        }
-        .padding(15)
-        .padding(.horizontal, 100)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill( ( (peakFreq == 0 || peakFreq == 99999) && !isRecording ) ? .gray :Color.blue)
-        )
-        .padding(.top, 10)
-
-        .disabled( ( (peakFreq == 0 || peakFreq == 99999) && !isRecording) )
+//        Button(
+//            action : {
+//                
+//            }
+//        ){
+//            Text("Continue")
+//                .foregroundStyle(.white)
+//        }
+//        .padding(15)
+//        .padding(.horizontal, 100)
+//        .background(
+//            RoundedRectangle(cornerRadius: 10)
+//                .fill( ( (peakFreq == 0 || peakFreq == 99999) && !isRecording ) ? .gray :Color.blue)
+//        )
+//        .padding(.top, 10)
+//
+//        .disabled( ( (peakFreq == 0 || peakFreq == 99999) && !isRecording) )
         
         
         
