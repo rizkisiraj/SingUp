@@ -62,7 +62,7 @@ class FrequencyDetector: ObservableObject {
 
     func analyzeBuffer(buffer: AVAudioPCMBuffer) {
         let channelData = buffer.floatChannelData?[0]
-        let frameCount = Int(buffer.frameLength)
+        _ = Int(buffer.frameLength)
         let channelArray = Array(UnsafeBufferPointer(start: channelData, count: fftSize))
 
         let window = vDSP.window(ofType: Float.self,
