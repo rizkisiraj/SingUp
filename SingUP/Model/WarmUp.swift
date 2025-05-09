@@ -7,7 +7,7 @@
 import SwiftUI
 
 
-struct WarmUp: Identifiable {
+struct WarmUp: Identifiable, Hashable {
     let id = UUID()
     var title: String
     var image: ImageResource

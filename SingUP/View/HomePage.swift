@@ -158,7 +158,7 @@ struct HomePage:View{
                     VStack{
                         Image(systemName: "house.fill")
                             .foregroundStyle(page == 0 ? .blue  : .gray)
-                        Text("Profile")
+                        Text("Home")
                             .foregroundStyle(page == 0 ? .blue  : .gray)
 
                     }
