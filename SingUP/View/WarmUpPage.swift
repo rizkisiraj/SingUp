@@ -12,9 +12,7 @@ struct WarmUpPage:View{
     var body: some View{
         VStack{
             List(listOfWarmUp) {warmUp in
-                NavigationLink {
-                    WarmUpGuideScreen(warmUp: warmUp, path : $path)
-                } label: {
+                NavigationLink(value: warmUp) {
                     HStack {
                         Image(warmUp.image)
                             .resizable()
@@ -29,10 +27,12 @@ struct WarmUpPage:View{
                                 .foregroundStyle(.secondary)
                         }
                         .padding(.leading)
-                        
                     }
                     .padding(8)
                 }
+            }
+            .navigationDestination(for: WarmUp.self) { warmUp in
+                WarmUpGuideScreen(warmUp: warmUp, path: $path)
             }
         }
         .navigationTitle("Warm Up")

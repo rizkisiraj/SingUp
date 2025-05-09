@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		7E7156432DCDAB21006B80C3 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 7E7156422DCDAB21006B80C3 /* Lottie */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		08DE93CE2DC1069D00089B3F /* SingUP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SingUP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7E7156432DCDAB21006B80C3 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 			);
 			name = SingUP;
 			packageProductDependencies = (
+				7E7156422DCDAB21006B80C3 /* Lottie */,
 			);
 			productName = SingUP;
 			productReference = 08DE93CE2DC1069D00089B3F /* SingUP.app */;
@@ -107,6 +113,9 @@
 			);
 			mainGroup = 08DE93C52DC1069D00089B3F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				7E7156412DCDAB21006B80C3 /* XCRemoteSwiftPackageReference "lottie-spm" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 08DE93CF2DC1069D00089B3F /* Products */;
 			projectDirPath = "";
@@ -341,6 +350,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7E7156412DCDAB21006B80C3 /* XCRemoteSwiftPackageReference "lottie-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-spm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7E7156422DCDAB21006B80C3 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7E7156412DCDAB21006B80C3 /* XCRemoteSwiftPackageReference "lottie-spm" */;
+			productName = Lottie;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 08DE93C62DC1069D00089B3F /* Project object */;
 }
