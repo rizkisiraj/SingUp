@@ -36,7 +36,7 @@ struct ScaleTraining: View {
 
     let totalColumns = 30
     let columnWidth: CGFloat = 100
-    let scrollDuration: Double = 26.0
+    let scrollDuration: Double = 30.0
 
     var body: some View {
             GeometryReader { geometry in
@@ -60,17 +60,6 @@ struct ScaleTraining: View {
                                         .frame(height: 1)
                                         .position(x: geo.size.width / 2,
                                                   y: cellHeight * CGFloat(i))
-                                }
-                                
-                                // Labels
-                                VStack(spacing: 0) {
-                                    ForEach(yLabels.indices, id: \.self) { index in
-                                        Text(yLabels[index])
-                                            .font(.caption2)
-                                            .foregroundColor(.black)
-                                            .frame(maxWidth: .infinity)
-                                            .frame(height: cellHeight)
-                                    }
                                 }
                             }
                         }
@@ -202,7 +191,7 @@ struct ScaleTraining: View {
         guard isPitchMovementActive else { return }
 
         let minYIndex = yLabels.firstIndex(of: "C3") ?? 0  // Lower bound
-        let maxYIndex = yLabels.firstIndex(of: "B3") ?? yLabels.count - 1  // Upper bound
+        let maxYIndex = yLabels.firstIndex(of: "D4") ?? yLabels.count - 1  // Upper bound
 
         if pitch > 100, currentYIndex > maxYIndex {
             currentYIndex -= 1
@@ -338,35 +327,28 @@ struct CoordinateGridViewScale: View {
         let highlightPositions: [(GridCell, String)] = [
             (GridCell(x: 2, y: "C3"), "Do"),
             (GridCell(x: 3, y: "E3"), "Re"),
-            (GridCell(x: 4, y: "G3"), "Mi"),
-            (GridCell(x: 5, y: "B3"), "Fa"),
-            (GridCell(x: 6, y: "G3"), "So"),
-            (GridCell(x: 7, y: "E3"), "Fa"),
-            (GridCell(x: 8, y: "C3"), "Mi"),
+            (GridCell(x: 4, y: "C3"), "Do"),
+            (GridCell(x: 6, y: "C3"), "Do"),
+            (GridCell(x: 7, y: "E3"), "Re"),
+            (GridCell(x: 8, y: "G3"), "Mi"),
             (GridCell(x: 9, y: "E3"), "Re"),
-            (GridCell(x: 10, y: "G3"), "Do"),
-            (GridCell(x: 11, y: "B3"), "Mi"),
-            (GridCell(x: 12, y: "G3"), "Re"),
-            (GridCell(x: 13, y: "E3"), "Fa"),
-            (GridCell(x: 14, y: "C3"), "So"),
-            (GridCell(x: 15, y: "E3"), "Re"),
-            (GridCell(x: 16, y: "G3"), "So"),
-            (GridCell(x: 17, y: "B3"), "Do"),
-            (GridCell(x: 18, y: "G3"), "Fa"),
-            (GridCell(x: 19, y: "E3"), "Do"),
-            (GridCell(x: 20, y: "C3"), "Mi"),
+            (GridCell(x: 10, y: "C3"), "Do"),
+            (GridCell(x: 12, y: "C3"), "Do"),
+            (GridCell(x: 13, y: "E3"), "Re"),
+            (GridCell(x: 14, y: "G3"), "Mi"),
+            (GridCell(x: 15, y: "B3"), "Fa"),
+            (GridCell(x: 16, y: "G3"), "Mi"),
+            (GridCell(x: 17, y: "E3"), "Re"),
+            (GridCell(x: 18, y: "C3"), "Do"),
+            (GridCell(x: 20, y: "C3"), "Do"),
             (GridCell(x: 21, y: "E3"), "Re"),
-            (GridCell(x: 22, y: "G3"), "So"),
-            (GridCell(x: 23, y: "B3"), "Do"),
-            (GridCell(x: 24, y: "G3"), "Fa"),
-            (GridCell(x: 25, y: "E3"), "Do"),
-            (GridCell(x: 26, y: "C3"), "Mi"),
+            (GridCell(x: 22, y: "G3"), "Mi"),
+            (GridCell(x: 23, y: "B3"), "Fa"), // ngedouble
+            (GridCell(x: 24, y: "D4"), "So"),
+            (GridCell(x: 25, y: "B3"), "Fa"),
+            (GridCell(x: 26, y: "G3"), "Mi"),
             (GridCell(x: 27, y: "E3"), "Re"),
-            (GridCell(x: 28, y: "G3"), "Mi"),
-            (GridCell(x: 29, y: "B3"), "Fa"),
-            (GridCell(x: 30, y: "G3"), "Re"),
-            (GridCell(x: 31, y: "E3"), "Fa"),
-            (GridCell(x: 32, y: "C3"), "So"),
+            (GridCell(x: 28, y: "C3"), "Do"),
         ]
 
         return Group {
@@ -480,6 +462,6 @@ struct CountdownProgressBar: View {
     }
 }
 
-//#Preview {
-//    ScaleTraining()
-//}
+#Preview {
+    ScaleTraining(path: .constant(NavigationPath()))
+}

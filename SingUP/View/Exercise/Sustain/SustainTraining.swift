@@ -28,7 +28,7 @@ struct SustainTraining: View {
     @State private var scrollOffset: CGFloat = 0
     @State private var isAnimating = false // Track animation state
     @State private var currentYIndex: Int = 19 // Index for "C3" as starting point
-    @StateObject private var pitchManager = PitchManager()
+    //@StateObject private var pitchManager = PitchManager()
     @State private var isPitchMovementActive = false
 
     
@@ -187,11 +187,11 @@ struct SustainTraining: View {
                 }
             }
             .edgesIgnoringSafeArea(.all)
-            .onAppear {
-                pitchManager.onPitchDetected = { pitch in
-                    handlePitchChange(pitch)
-                }
-            }
+//            .onAppear {
+//                pitchManager.onPitchDetected = { pitch in
+//                    handlePitchChange(pitch)
+//                }
+//            }
             .navigationDestination(isPresented: $shouldNavigate) {
                 SustainCompleted(path: $path) // <- replace with your actual destination view
             }
