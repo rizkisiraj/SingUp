@@ -6,6 +6,14 @@
 //
 
 import SwiftUI
+import AVFoundation
+
+// MARK: PEMBATAS-------------------------
+
+
+
+
+// MARK: PEMBATAS-------------------------
 
 struct ContentView: View {
     @State private var path = NavigationPath()
@@ -53,18 +61,14 @@ struct ContentView: View {
                 } else if route == "scale"{
                     ScaleTraining(path: $path)
                         .modelContainer(for : [UserProfile.self])
-                } else if route == "sustain"{
-                    SustainTraining(path: $path)
-                        .modelContainer(for : [UserProfile.self])
                 } else{
                     //Mic()
                     HomePage(path : $path)
                         .modelContainer(for : [UserProfile.self])
                 }
-                
-                
             }
         }
+        .navigationBarBackButtonHidden(true) // Hide the back button in SubView
     }
 }
 

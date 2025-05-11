@@ -11,7 +11,7 @@ import SwiftUI
 struct SingUPApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MicPermissionView()
         }
     }
 }

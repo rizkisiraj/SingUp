@@ -36,7 +36,7 @@ struct ScaleTraining: View {
 
     let totalColumns = 30
     let columnWidth: CGFloat = 100
-    let scrollDuration: Double = 26.0
+    let scrollDuration: Double = 30.0
 
     var body: some View {
             GeometryReader { geometry in
@@ -60,17 +60,6 @@ struct ScaleTraining: View {
                                         .frame(height: 1)
                                         .position(x: geo.size.width / 2,
                                                   y: cellHeight * CGFloat(i))
-                                }
-                                
-                                // Labels
-                                VStack(spacing: 0) {
-                                    ForEach(yLabels.indices, id: \.self) { index in
-                                        Text(yLabels[index])
-                                            .font(.caption2)
-                                            .foregroundColor(.black)
-                                            .frame(maxWidth: .infinity)
-                                            .frame(height: cellHeight)
-                                    }
                                 }
                             }
                         }
@@ -188,8 +177,20 @@ struct ScaleTraining: View {
             }
             .edgesIgnoringSafeArea(.all)
             .onAppear {
-                pitchManager.onPitchDetected = { pitch in
-                    handlePitchChange(pitch)
+                print("ScaleTraining appeared")
+
+                AVCaptureDevice.requestAccess(for: .audio) { granted in
+                    DispatchQueue.main.async {
+                        if granted {
+                            pitchManager.onPitchDetected = { pitch in
+                                print("Pitch detected: \(pitch)")
+                                handlePitchChange(pitch)
+                            }
+                            pitchManager.startPitchDetection()
+                        } else {
+                            print("Microphone access denied. Show an alert to the user if needed.")
+                        }
+                    }
                 }
             }
             .navigationDestination(isPresented: $shouldNavigate) {
@@ -202,7 +203,7 @@ struct ScaleTraining: View {
         guard isPitchMovementActive else { return }
 
         let minYIndex = yLabels.firstIndex(of: "C3") ?? 0  // Lower bound
-        let maxYIndex = yLabels.firstIndex(of: "B3") ?? yLabels.count - 1  // Upper bound
+        let maxYIndex = yLabels.firstIndex(of: "D4") ?? yLabels.count - 1  // Upper bound
 
         if pitch > 100, currentYIndex > maxYIndex {
             currentYIndex -= 1
@@ -338,35 +339,28 @@ struct CoordinateGridViewScale: View {
         let highlightPositions: [(GridCell, String)] = [
             (GridCell(x: 2, y: "C3"), "Do"),
             (GridCell(x: 3, y: "E3"), "Re"),
-            (GridCell(x: 4, y: "G3"), "Mi"),
-            (GridCell(x: 5, y: "B3"), "Fa"),
-            (GridCell(x: 6, y: "G3"), "So"),
-            (GridCell(x: 7, y: "E3"), "Fa"),
-            (GridCell(x: 8, y: "C3"), "Mi"),
+            (GridCell(x: 4, y: "C3"), "Do"),
+            (GridCell(x: 6, y: "C3"), "Do"),
+            (GridCell(x: 7, y: "E3"), "Re"),
+            (GridCell(x: 8, y: "G3"), "Mi"),
             (GridCell(x: 9, y: "E3"), "Re"),
-            (GridCell(x: 10, y: "G3"), "Do"),
-            (GridCell(x: 11, y: "B3"), "Mi"),
-            (GridCell(x: 12, y: "G3"), "Re"),
-            (GridCell(x: 13, y: "E3"), "Fa"),
-            (GridCell(x: 14, y: "C3"), "So"),
-            (GridCell(x: 15, y: "E3"), "Re"),
-            (GridCell(x: 16, y: "G3"), "So"),
-            (GridCell(x: 17, y: "B3"), "Do"),
-            (GridCell(x: 18, y: "G3"), "Fa"),
-            (GridCell(x: 19, y: "E3"), "Do"),
-            (GridCell(x: 20, y: "C3"), "Mi"),
+            (GridCell(x: 10, y: "C3"), "Do"),
+            (GridCell(x: 12, y: "C3"), "Do"),
+            (GridCell(x: 13, y: "E3"), "Re"),
+            (GridCell(x: 14, y: "G3"), "Mi"),
+            (GridCell(x: 15, y: "B3"), "Fa"),
+            (GridCell(x: 16, y: "G3"), "Mi"),
+            (GridCell(x: 17, y: "E3"), "Re"),
+            (GridCell(x: 18, y: "C3"), "Do"),
+            (GridCell(x: 20, y: "C3"), "Do"),
             (GridCell(x: 21, y: "E3"), "Re"),
-            (GridCell(x: 22, y: "G3"), "So"),
-            (GridCell(x: 23, y: "B3"), "Do"),
-            (GridCell(x: 24, y: "G3"), "Fa"),
-            (GridCell(x: 25, y: "E3"), "Do"),
-            (GridCell(x: 26, y: "C3"), "Mi"),
+            (GridCell(x: 22, y: "G3"), "Mi"),
+            (GridCell(x: 23, y: "B3"), "Fa"),
+            (GridCell(x: 24, y: "D4"), "So"),
+            (GridCell(x: 25, y: "B3"), "Fa"),
+            (GridCell(x: 26, y: "G3"), "Mi"),
             (GridCell(x: 27, y: "E3"), "Re"),
-            (GridCell(x: 28, y: "G3"), "Mi"),
-            (GridCell(x: 29, y: "B3"), "Fa"),
-            (GridCell(x: 30, y: "G3"), "Re"),
-            (GridCell(x: 31, y: "E3"), "Fa"),
-            (GridCell(x: 32, y: "C3"), "So"),
+            (GridCell(x: 28, y: "C3"), "Do"),
         ]
 
         return Group {
@@ -398,24 +392,81 @@ struct CoordinateGridViewScale: View {
 }
 
 class PitchManager: ObservableObject {
-    private let audioEngine = AVAudioEngine()
-    private let fftSetup = vDSP.FFT(log2n: 11, radix: .radix2, ofType: DSPSplitComplex.self)! // 2048-point FFT
+    private var audioEngine = AVAudioEngine()
+    private var fftSetup = vDSP.FFT(log2n: 11, radix: .radix2, ofType: DSPSplitComplex.self)! // 2048-point FFT
     private var bufferSize: AVAudioFrameCount = 2048
-    private let sampleRate: Double
+    private var sampleRate: Double
 
     var onPitchDetected: ((Float) -> Void)? // <-- callback to ContentView
-
+    
     init() {
-        let input = audioEngine.inputNode
-        let format = input.outputFormat(forBus: 0)
-        self.sampleRate = format.sampleRate
+            self.audioEngine = AVAudioEngine()
+            self.bufferSize = 2048
+            self.fftSetup = vDSP.FFT(log2n: 11, radix: .radix2, ofType: DSPSplitComplex.self)!
+            self.sampleRate = 44100  // Default fallback
 
-        input.installTap(onBus: 0, bufferSize: bufferSize, format: format) { buffer, time in
-            self.processBuffer(buffer)
+            // Do NOT start audio engine or install tap here
+            // These are deferred until permissions are granted and `startPitchDetection()` is called
         }
+    
+    func startPitchDetection() {
+            let session = AVAudioSession.sharedInstance()
+            do {
+                try session.setCategory(.playAndRecord, mode: .measurement, options: [.defaultToSpeaker])
+                try session.setActive(true)
 
-        try? audioEngine.start()
-    }
+                let inputNode = audioEngine.inputNode
+                let format = inputNode.outputFormat(forBus: 0)
+                self.sampleRate = format.sampleRate
+
+                inputNode.installTap(onBus: 0, bufferSize: bufferSize, format: format) { [weak self] buffer, _ in
+                    guard let self = self else { return }
+                    let frequency = self.detectPitch(from: buffer)
+                    DispatchQueue.main.async {
+                        self.onPitchDetected?(frequency)
+                    }
+                }
+
+                try audioEngine.start()
+                print("Audio engine started successfully.")
+            } catch {
+                print("Failed to start audio engine: \(error)")
+            }
+        }
+    // MARK: TO HANDLE .onAppear Error
+    
+    func detectPitch(from buffer: AVAudioPCMBuffer) -> Float {
+            guard let floatChannelData = buffer.floatChannelData else { return 0.0 }
+            let frameCount = Int(buffer.frameLength)
+            let samples = Array(UnsafeBufferPointer(start: floatChannelData[0], count: frameCount))
+
+            var real = [Float](repeating: 0.0, count: samples.count)
+            var imag = [Float](repeating: 0.0, count: samples.count)
+            var splitComplex = DSPSplitComplex(realp: &real, imagp: &imag)
+
+            samples.withUnsafeBufferPointer { ptr in
+                ptr.baseAddress!.withMemoryRebound(to: DSPComplex.self, capacity: samples.count) { complexPtr in
+                    vDSP_ctoz(complexPtr, 2, &splitComplex, 1, vDSP_Length(samples.count / 2))
+                }
+            }
+
+            let log2n = vDSP_Length(log2(Float(samples.count)))
+            let fftSetup = vDSP_create_fftsetup(log2n, Int32(kFFTRadix2))!
+            vDSP_fft_zrip(fftSetup, &splitComplex, 1, log2n, Int32(FFT_FORWARD))
+
+            var magnitudes = [Float](repeating: 0.0, count: samples.count / 2)
+            vDSP_zvmags(&splitComplex, 1, &magnitudes, 1, vDSP_Length(samples.count / 2))
+
+            var maxMag: Float = 0.0
+            var maxIndex: vDSP_Length = 0
+            vDSP_maxvi(magnitudes, 1, &maxMag, &maxIndex, vDSP_Length(samples.count / 2))
+
+            let sampleRate = buffer.format.sampleRate
+            let frequency = Float(maxIndex) * Float(sampleRate) / Float(samples.count)
+
+            vDSP_destroy_fftsetup(fftSetup)
+            return frequency
+        }
 
     private func processBuffer(_ buffer: AVAudioPCMBuffer) {
         guard let channelData = buffer.floatChannelData?[0] else { return }
@@ -481,5 +532,5 @@ struct CountdownProgressBar: View {
 }
 
 //#Preview {
-//    ScaleTraining()
+//    ScaleTraining(path: .constant(NavigationPath()))
 //}
