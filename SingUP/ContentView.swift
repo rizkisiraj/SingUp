@@ -15,6 +15,9 @@ struct FirstScreen: View {
     @State private var showSplash = true
     @State private var navigateToSubView = false
     @State private var showSettingsAlert = false
+    
+    // pake di branch onboarding
+    //@State private var reloadID = UUID() // <- Add this
 
     var body: some View {
         ZStack {
@@ -37,6 +40,8 @@ struct FirstScreen: View {
                 }
             }
         }
+        // pake di branch OnBoarding
+        //.id(reloadID) // <- Add this to re-render the whole view
     }
     
     // Helper function to check if microphone permission is granted
@@ -49,6 +54,9 @@ struct FirstScreen: View {
 struct OnboardingView: View {
     @Binding var navigateToSubView: Bool
     @Binding var showSettingsAlert: Bool
+    
+    // pake di branch onboarding
+    //@Binding var reloadID: UUID // <- New binding
 
     var body: some View {
         NavigationStack {
@@ -104,6 +112,10 @@ struct OnboardingView: View {
                                     UserDefaults.standard.set(true, forKey: "MicrophonePermissionGranted") // Save permission state
                                     print("Microphone access granted")
                                     navigateToSubView = true
+                                    
+                                    // pake di branch onboarding
+//                                    UserDefaults.standard.set(true, forKey: "MicrophonePermissionGranted")
+//                                    reloadID = UUID() // Trigger view reload back to SplashScreen
                                 } else {
                                     print("Microphone access denied")
                                     showSettingsAlert = true
@@ -206,9 +218,6 @@ struct ContentView: View {
                         .modelContainer(for : [UserProfile.self])
                 } else if route == "scale"{
                     ScaleTraining(path: $path)
-                        .modelContainer(for : [UserProfile.self])
-                } else if route == "sustain"{
-                    SustainTraining(path: $path)
                         .modelContainer(for : [UserProfile.self])
                 } else{
                     //Mic()
