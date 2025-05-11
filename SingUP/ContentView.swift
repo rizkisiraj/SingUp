@@ -207,9 +207,6 @@ struct ContentView: View {
                 } else if route == "scale"{
                     ScaleTraining(path: $path)
                         .modelContainer(for : [UserProfile.self])
-                } else if route == "sustain"{
-                    SustainTraining(path: $path)
-                        .modelContainer(for : [UserProfile.self])
                 } else{
                     //Mic()
                     HomePage(path : $path)
