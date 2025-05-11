@@ -193,6 +193,10 @@ struct ScaleTraining: View {
                     }
                 }
             }
+            .onDisappear {
+                pitchManager.stopPitchDetection()
+                timer?.invalidate()
+            }
             .navigationDestination(isPresented: $shouldNavigate) {
                 ScaleCompleted(path: $path) // <- replace with your actual destination view
             }
@@ -408,6 +412,12 @@ class PitchManager: ObservableObject {
             // Do NOT start audio engine or install tap here
             // These are deferred until permissions are granted and `startPitchDetection()` is called
         }
+    
+    func stopPitchDetection() {
+        audioEngine.inputNode.removeTap(onBus: 0)
+        audioEngine.stop()
+        print("Audio engine stopped.")
+    }
     
     func startPitchDetection() {
             let session = AVAudioSession.sharedInstance()
