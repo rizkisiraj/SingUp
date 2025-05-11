@@ -193,6 +193,7 @@ struct ScaleTraining: View {
                     }
                 }
             }
+        // newwww
             .onDisappear {
                 pitchManager.stopPitchDetection()
                 timer?.invalidate()
