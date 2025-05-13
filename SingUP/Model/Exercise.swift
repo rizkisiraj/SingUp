@@ -10,12 +10,12 @@ import SwiftUI
 struct Exercise: Identifiable {
     let id = UUID()
     var title: String
-    var image: ImageResource
+    var image: String
     var description: String
     var shortDesc: String
     var path: String = ""
 }
 
 let listOfExercise: [Exercise] = [
-    Exercise(title: "Scale", image: .scaleTraining, description: "Train your pitch accuracy and vocal agility by singing through scales smoothly and evenly, one note at a time.", shortDesc: "Practice Vocal Range", path : "scale"),
+    Exercise(title: "Scale", image: "Scale Doremi", description: "Train your pitch accuracy and vocal agility by singing through scales smoothly and evenly, one note at a time.", shortDesc: "Practice Vocal Range", path : "scale"),
 ]
