@@ -8,15 +8,31 @@
 
 /* Begin PBXBuildFile section */
 		088DE2B32DCDE9E3001DB807 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 088DE2B22DCDE9E3001DB807 /* Lottie */; };
+		7E8EF9DC2DD1D8FF009CF7CD /* AudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7E8EF9DB2DD1D8FF009CF7CD /* AudioKit */; };
+		7E8EF9DF2DD1D963009CF7CD /* AudioKitEX in Frameworks */ = {isa = PBXBuildFile; productRef = 7E8EF9DE2DD1D963009CF7CD /* AudioKitEX */; };
+		7E8EF9E22DD1D981009CF7CD /* SoundpipeAudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7E8EF9E12DD1D981009CF7CD /* SoundpipeAudioKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		08DE93CE2DC1069D00089B3F /* SingUP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SingUP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		7E82287A2DD26154003639D0 /* Exceptions for "SingUP" folder in "SingUP" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 08DE93CD2DC1069D00089B3F /* SingUP */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		08DE93D02DC1069D00089B3F /* SingUP */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				7E82287A2DD26154003639D0 /* Exceptions for "SingUP" folder in "SingUP" target */,
+			);
 			path = SingUP;
 			sourceTree = "<group>";
 		};
@@ -27,6 +43,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7E8EF9DF2DD1D963009CF7CD /* AudioKitEX in Frameworks */,
+				7E8EF9DC2DD1D8FF009CF7CD /* AudioKit in Frameworks */,
+				7E8EF9E22DD1D981009CF7CD /* SoundpipeAudioKit in Frameworks */,
 				088DE2B32DCDE9E3001DB807 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -71,6 +90,9 @@
 			name = SingUP;
 			packageProductDependencies = (
 				088DE2B22DCDE9E3001DB807 /* Lottie */,
+				7E8EF9DB2DD1D8FF009CF7CD /* AudioKit */,
+				7E8EF9DE2DD1D963009CF7CD /* AudioKitEX */,
+				7E8EF9E12DD1D981009CF7CD /* SoundpipeAudioKit */,
 			);
 			productName = SingUP;
 			productReference = 08DE93CE2DC1069D00089B3F /* SingUP.app */;
@@ -102,6 +124,9 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				088DE2B12DCDE9E3001DB807 /* XCRemoteSwiftPackageReference "lottie-spm" */,
+				7E8EF9DA2DD1D8FF009CF7CD /* XCRemoteSwiftPackageReference "AudioKit" */,
+				7E8EF9DD2DD1D963009CF7CD /* XCRemoteSwiftPackageReference "AudioKitEX" */,
+				7E8EF9E02DD1D981009CF7CD /* XCRemoteSwiftPackageReference "SoundpipeAudioKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 08DE93CF2DC1069D00089B3F /* Products */;
@@ -261,9 +286,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SingUP/Preview Content\"";
-				DEVELOPMENT_TEAM = FY2ZUW5Q3B;
+				DEVELOPMENT_TEAM = 5WL5AS853S;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SingUP/Info.plist;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Kami memerlukan akses mikrofon untuk mendeteksi frekuensi suara.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -291,9 +317,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SingUP/Preview Content\"";
-				DEVELOPMENT_TEAM = FY2ZUW5Q3B;
+				DEVELOPMENT_TEAM = 5WL5AS853S;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SingUP/Info.plist;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Kami memerlukan akses mikrofon untuk mendeteksi frekuensi suara.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -345,6 +372,30 @@
 				minimumVersion = 4.5.1;
 			};
 		};
+		7E8EF9DA2DD1D8FF009CF7CD /* XCRemoteSwiftPackageReference "AudioKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AudioKit/AudioKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.6.5;
+			};
+		};
+		7E8EF9DD2DD1D963009CF7CD /* XCRemoteSwiftPackageReference "AudioKitEX" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AudioKit/AudioKitEX.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.6.2;
+			};
+		};
+		7E8EF9E02DD1D981009CF7CD /* XCRemoteSwiftPackageReference "SoundpipeAudioKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AudioKit/SoundpipeAudioKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.6.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -352,6 +403,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 088DE2B12DCDE9E3001DB807 /* XCRemoteSwiftPackageReference "lottie-spm" */;
 			productName = Lottie;
+		};
+		7E8EF9DB2DD1D8FF009CF7CD /* AudioKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7E8EF9DA2DD1D8FF009CF7CD /* XCRemoteSwiftPackageReference "AudioKit" */;
+			productName = AudioKit;
+		};
+		7E8EF9DE2DD1D963009CF7CD /* AudioKitEX */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7E8EF9DD2DD1D963009CF7CD /* XCRemoteSwiftPackageReference "AudioKitEX" */;
+			productName = AudioKitEX;
+		};
+		7E8EF9E12DD1D981009CF7CD /* SoundpipeAudioKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7E8EF9E02DD1D981009CF7CD /* XCRemoteSwiftPackageReference "SoundpipeAudioKit" */;
+			productName = SoundpipeAudioKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
