@@ -44,3 +44,8 @@ struct MicPermissionView: View {
         return UserDefaults.standard.bool(forKey: "MicrophonePermissionGranted")
     }
 }
+
+
+#Preview{
+    MicPermissionView()
+}
