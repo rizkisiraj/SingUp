@@ -196,7 +196,7 @@ struct VocalTest: View {
         )
         .padding(.top, 30)
         
-        Text("Hold to record \nand release when you done")
+        Text("Hold to record, \nand release when you're done.")
             .multilineTextAlignment(.center)
             .padding(.top, 10)
         
