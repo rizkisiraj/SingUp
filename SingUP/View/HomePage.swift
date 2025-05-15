@@ -15,6 +15,7 @@ struct HomePage:View{
     @State var freq : [Int] = [0, 9999]
     var vocalRange = VocalRange()
     @Environment(\.modelContext) var context
+    @State var history : History?
     
     var body: some View{
         VStack{
@@ -127,6 +128,7 @@ struct HomePage:View{
                     }
                 }
                 .onAppear(){
+                    history = History(context : context)
                     if let prof = userProfile.first{
                         freq = [Int(prof.lowestFrequency), Int(prof.highestFrequency)]
                     }else{
@@ -139,7 +141,7 @@ struct HomePage:View{
                     }
                 }
             }else{
-                HistoryPage()
+                HistoryPage(history : $history)
             }
             
             

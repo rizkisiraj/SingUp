@@ -9,6 +9,7 @@ import SwiftUI
 import Foundation
 import AVFoundation
 import Accelerate
+<<<<<<< HEAD
 import AudioKit
 import AudioKitEX
 import AudioToolbox
@@ -21,11 +22,19 @@ struct NoteEvent {
     let time: Double
     let duration: Double
 }
+=======
+import CoreData
+>>>>>>> 03d234a53710cb5c700e3b7a4480c3d47ea87b7c
 
 struct ScaleTraining: View {
-    
     @Binding var path : NavigationPath
+<<<<<<< HEAD
     @State private var highlights: [HighlightCell] = []
+=======
+    
+    @Environment(\.modelContext) var context
+    @State var history : History?
+>>>>>>> 03d234a53710cb5c700e3b7a4480c3d47ea87b7c
     @State private var shouldNavigate = false
     @State private var timePerColumn: Double = 1.0
     @State private var lastYIndex: Int = 0
@@ -287,13 +296,27 @@ struct ScaleTraining: View {
                         print("❌ AppleSequencer setup failed: \(error)")
                     }
                 }
+<<<<<<< HEAD
 
 
 
 
+=======
+            }
+            .onAppear {
+                history = History(context : context)
+            }
+        // newwww
+            .onDisappear {
+                pitchManager.stopPitchDetection()
+                timer?.invalidate()
+>>>>>>> 03d234a53710cb5c700e3b7a4480c3d47ea87b7c
             }
             .navigationDestination(isPresented: $shouldNavigate) {
-                ScaleCompleted(path: $path) // <- replace with your actual destination view
+                if history != nil {
+                    ScaleCompleted(history : $history, path: $path) // <- replace with your actual destination
+
+                }
             }
         }
         
