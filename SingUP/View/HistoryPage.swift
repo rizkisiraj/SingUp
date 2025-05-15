@@ -17,31 +17,26 @@ struct ValuePoint: Identifiable {
 
 // Line Chart View
 struct LineChartView: View {
-    let values: [Int]
+    
+    @State var values: [Int]
+    var history : History?
     enum Exercise : String, CaseIterable, Identifiable{
         case sustain
         case scale
         var id : Self {self}
     }
     
-    @State var selectedExercise: Exercise = .sustain
+    @State var selectedExercise: Exercise = .scale
     
     var body: some View {
         
         Text("History")
             .font(.largeTitle.bold())
         
-        Picker("Exercise", selection: $selectedExercise ){
-            Text("Sustain")
-                .tag(Exercise.sustain)
-            Text("Scale")
-                .tag(Exercise.scale)
-            
-        }
-        .pickerStyle(SegmentedPickerStyle())
-        .padding()
+        
         
         // Create data points with index starting from 1
+        
         let dataPoints = values.enumerated().map { ValuePoint(index: $0.offset + 1, value: $0.element) }
         
         Chart(dataPoints) { point in
@@ -97,8 +92,18 @@ struct LineChartView: View {
             }
         }
         .chartYScale(domain: 0...100)
-        .chartXScale(domain: 1...values.count)
+        .chartXScale(domain: 1...(values.count > 0 ? values.count : 10))
         .frame(height: 250)
+        .padding()
+        
+        Picker("Exercise", selection: $selectedExercise ){
+            Text("Sustain")
+                .tag(Exercise.sustain)
+            Text("Scale")
+                .tag(Exercise.scale)
+            
+        }
+        .pickerStyle(SegmentedPickerStyle())
         .padding()
         
         // Native List Below Chart
@@ -113,7 +118,7 @@ struct LineChartView: View {
         .padding()
         
         ScrollView{
-            ForEach(dataPoints) { point in
+            ForEach(Array((history?.fetchAll(type : selectedExercise == .scale ? 0 : 1) ?? []).enumerated()), id: \.offset) { index, hist in
                 HStack {
                     Image(selectedExercise == .scale ? "ScaleExercise" : "SustainExercise")
                     Spacer()
@@ -124,14 +129,14 @@ struct LineChartView: View {
                             .foregroundStyle(selectedExercise == .scale ? .blue : .green)
                             .frame(maxWidth : .infinity, alignment : .leading)
                         
-                        Text("Percobaan : \(point.index)")
+                        Text("Percobaan : \(index)")
                             .frame(maxWidth : .infinity, alignment : .leading)
                         
                     }
                    
                     Spacer()
                     VStack{
-                        Text("\(point.value)%")
+                        Text("\(Int(hist.accuracy))%")
                             .font(.title.bold())
                         Text("Accuracy")
                     }
@@ -144,18 +149,27 @@ struct LineChartView: View {
                 .padding(.horizontal, 20)
             }
         }
+        .onAppear {
+            //history?.deleteAll()
+            var arr = [Int]()
+            for val in history?.fetchAll(type : selectedExercise == .scale ? 0 : 1) ?? [] {
+                arr.append(Int(val.accuracy))
+            }
+            self.values = arr
+        }
        
     }
 }
-
 // Preview or usage in ContentView
 struct HistoryPage: View {
+    @Binding var history : History?
     var body: some View {
-        LineChartView(values: [10, 20, 30, 50, 40, 80, 90, 100])
+        LineChartView(values: [10, 20, 30, 50, 40, 80, 90, 100], history : history)
+        
     }
 }
 
 
 #Preview {
-    HistoryPage()
+    HistoryPage(history : .constant(nil))
 }

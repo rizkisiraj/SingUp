@@ -16,6 +16,8 @@ struct BreathingView: View {
     @State private var currentSessionIndex = 0
     @State private var phase: BreathingPhase = .inhale
     @State private var scales: [CGFloat] = [0.8, 0.8, 0.8]
+    @State private var countdown: Int = 0
+    @State private var timer: Timer?
 
     let inhaleDuration = 4.0
     let exhaleDuration = 4.0
@@ -31,8 +33,6 @@ struct BreathingView: View {
 
     var body: some View {
         VStack(spacing: 40) {
-            
-
             Spacer()
 
             ZStack {
@@ -44,26 +44,32 @@ struct BreathingView: View {
                         .animation(.easeInOut(duration: animationDuration()), value: scales[i])
                 }
 
-                // Core glowing center
                 Circle()
                     .stroke(Color.putihAbu, lineWidth: 2)
                     .frame(width: 200, height: 200)
-                
-                
-                Text(phase.rawValue)
-                    .font(.largeTitle)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
+
+                VStack(spacing: 10) {
+                    Text(phase.rawValue)
+                        .font(.largeTitle)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+
+                    // Countdown Timer Text
+                    Text("\(countdown)")
+                        .font(.title)
+                        .foregroundColor(.white)
+                        .opacity(countdown > 0 ? 1 : 0)
+                }
             }
 
-            Spacer()
-
+            Text("Make sure to use abdominal (diaphragmatic) breathing while standing up straight.")
+                .multilineTextAlignment(.center)
+                .font(.title2.bold())
+                .padding(.horizontal, 40)
+            
             Text("Session \(currentSessionIndex + 1) of \(sessions.count)")
                 .foregroundColor(.gray)
-
-            Button("Pause") {
-                // Pause logic placeholder
-            }
+                .font(.title2)
 
             Spacer()
         }
@@ -80,9 +86,21 @@ struct BreathingView: View {
         }
     }
 
+    func startCountdown(seconds: Int) {
+        countdown = seconds
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            if countdown > 0 {
+                countdown -= 1
+            } else {
+                timer?.invalidate()
+            }
+        }
+    }
+
     func startSession() {
         phase = .inhale
-        // Animate from 1.0 to multipliers
+        startCountdown(seconds: Int(inhaleDuration))
         for i in 0..<scales.count {
             scales[i] = multipliers[i]
         }
@@ -90,7 +108,7 @@ struct BreathingView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + inhaleDuration) {
             if let hold = sessions[currentSessionIndex].holdDuration {
                 phase = .hold
-                // Stay at current size
+                startCountdown(seconds: Int(hold))
                 DispatchQueue.main.asyncAfter(deadline: .now() + hold) {
                     startExhale()
                 }
@@ -102,7 +120,7 @@ struct BreathingView: View {
 
     func startExhale() {
         phase = .exhale
-        // Animate all back to 1.0
+        startCountdown(seconds: Int(exhaleDuration))
         for i in 0..<scales.count {
             scales[i] = 0.8
         }
@@ -113,23 +131,18 @@ struct BreathingView: View {
                 startSession()
             } else {
                 phase = .exhale
-                // Done
-                if currentSessionIndex == sessions.count - 1 {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        path.append("warmupdone")
-    //                    print("Siraj selesai")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    path.append("warmupdone")
                 }
             }
-            
-        }
-        
         }
     }
 }
 
-//struct BreathingView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        BreathingView()
-//    }
-//}
+
+struct BreathingView_Previews: PreviewProvider {
+    static var previews: some View {
+        BreathingView(path : .constant(NavigationPath()))
+    }
+}
 

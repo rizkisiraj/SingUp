@@ -15,11 +15,12 @@ struct HomePage:View{
     @State var freq : [Int] = [0, 9999]
     var vocalRange = VocalRange()
     @Environment(\.modelContext) var context
+    @State var history : History?
     
     var body: some View{
         VStack{
             if page == 0 {
-                ScrollView{
+                VStack{
                     VStack(alignment : .leading, spacing : 0){
                         
                         Text("Your Vocal Range is :")
@@ -115,6 +116,7 @@ struct HomePage:View{
                                 .padding()
                                 
                             }
+                            .padding(.bottom, 30)
                             
                             
                             
@@ -126,6 +128,7 @@ struct HomePage:View{
                     }
                 }
                 .onAppear(){
+                    history = History(context : context)
                     if let prof = userProfile.first{
                         freq = [Int(prof.lowestFrequency), Int(prof.highestFrequency)]
                     }else{
@@ -138,7 +141,7 @@ struct HomePage:View{
                     }
                 }
             }else{
-                HistoryPage()
+                HistoryPage(history : $history)
             }
             
             
@@ -157,9 +160,9 @@ struct HomePage:View{
                 }){
                     VStack{
                         Image(systemName: "house.fill")
-                            .foregroundStyle(page == 0 ? .blue  : .gray)
+                            .foregroundStyle(page == 0 ? .black  : .gray)
                         Text("Home")
-                            .foregroundStyle(page == 0 ? .blue  : .gray)
+                            .foregroundStyle(page == 0 ? .black  : .gray)
 
                     }
                 }
@@ -175,10 +178,10 @@ struct HomePage:View{
                 }){
                     VStack{
                         Image(systemName: "clock.fill")
-                            .foregroundStyle(page == 1 ? .blue  : .gray)
+                            .foregroundStyle(page == 1 ? .black  : .gray)
 
                         Text("History")
-                            .foregroundStyle(page == 1 ? .blue  : .gray)
+                            .foregroundStyle(page == 1 ? .black  : .gray)
 
                     }
                 }

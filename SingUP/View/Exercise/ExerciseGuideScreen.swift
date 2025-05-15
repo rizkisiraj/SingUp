@@ -19,7 +19,7 @@ struct ExerciseGuideScreen: View {
                 .fontWeight(.bold)
             Spacer()
 //            Image(exercise.image)
-            LottieView(animation: .named(exercise.image))
+            LottieView(animation: .named(exercise.imageLottie))
                 .looping()
             Spacer()
             Text(exercise.description)

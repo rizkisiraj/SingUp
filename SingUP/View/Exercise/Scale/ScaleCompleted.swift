@@ -9,7 +9,9 @@ import SwiftUI
 
 struct ScaleCompleted: View {
     @Environment(\.dismiss) private var dismiss
+    @Binding var history : History?
     @Binding var path: NavigationPath // Binding to NavigationPath to control navigation
+    @State var randomAccuracy = Float(0)
     var body: some View {
         VStack(spacing: 30) {
             Text("Amazing !")
@@ -31,7 +33,7 @@ struct ScaleCompleted: View {
                     .lineLimit(nil)
                     .fixedSize(horizontal: false, vertical: true)
                 
-                Text("30%")
+                Text("\(Int(randomAccuracy))%")
                     .font(.system(size: 32, weight: .bold))
                 
                 Text("You are quite off-pitch")
@@ -72,6 +74,12 @@ struct ScaleCompleted: View {
 
             Spacer()
         }
+        .onAppear {
+            randomAccuracy = Float.random(in: 60.0...95.0)
+            history?.store(date: Date(), exercise: 0, accuracy: randomAccuracy)
+            print("Store")
+        }
+
         .padding(.horizontal, 16) // Apply 16px horizontal padding to entire screen
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)

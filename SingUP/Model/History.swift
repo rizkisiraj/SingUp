@@ -39,23 +39,46 @@ class History{
         }
     }
     
-    func store(date : Date, exercise : Int, accuracy : Float){
+    public func store(date: Date, exercise: Int, accuracy: Float) {
         let newVocalTraining = VocalTraining(id: UUID(), date: date, exercise: exercise, accuracy: accuracy)
-        
         context.insert(newVocalTraining)
         
+        do {
+            try context.save() // <— Tambahkan ini
+        } catch {
+            print("Failed to save: \(error)")
+        }
     }
     
-    func fetchAll() -> [VocalTraining]{
-        let query = FetchDescriptor<VocalTraining>();
-        
-        do{
-             self.vocalTraining = try context.fetch(query)
-        }catch{
+//    public func deleteAll() {
+//        let query = FetchDescriptor<VocalTraining>()
+//        
+//        do {
+//            let allData = try context.fetch(query)
+//            for item in allData {
+//                context.delete(item)
+//            }
+//            // Jika kamu menggunakan SwiftData dengan pengaturan manual commit:
+//            // try context.save()
+//        } catch {
+//            print("Failed to delete all data: \(error)")
+//        }
+//    }
+    
+    func fetchAll(type: Int) -> [VocalTraining] {
+        let predicate = #Predicate<VocalTraining> { $0.exercise == type }
+        let query = FetchDescriptor(predicate: predicate)
+
+        do {
+            self.vocalTraining = try context.fetch(query)
+            print("Filtered data count: \(self.vocalTraining.count)")
+        } catch {
             print("Error: \(error)")
         }
+
         return vocalTraining
     }
+
     
     
 }
