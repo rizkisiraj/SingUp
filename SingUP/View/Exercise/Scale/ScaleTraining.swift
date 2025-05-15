@@ -9,11 +9,13 @@ import SwiftUI
 import Foundation
 import AVFoundation
 import Accelerate
+import CoreData
 
 struct ScaleTraining: View {
-    
     @Binding var path : NavigationPath
     
+    @Environment(\.modelContext) var context
+    @State var history : History?
     @State private var shouldNavigate = false
     
     // MARK: AAA
@@ -193,13 +195,19 @@ struct ScaleTraining: View {
                     }
                 }
             }
+            .onAppear {
+                history = History(context : context)
+            }
         // newwww
             .onDisappear {
                 pitchManager.stopPitchDetection()
                 timer?.invalidate()
             }
             .navigationDestination(isPresented: $shouldNavigate) {
-                ScaleCompleted(path: $path) // <- replace with your actual destination view
+                if history != nil {
+                    ScaleCompleted(history : $history, path: $path) // <- replace with your actual destination
+
+                }
             }
         }
         
