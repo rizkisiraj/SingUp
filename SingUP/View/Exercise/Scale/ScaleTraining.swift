@@ -9,21 +9,51 @@ import SwiftUI
 import Foundation
 import AVFoundation
 import Accelerate
+<<<<<<< HEAD
+import AudioKit
+import AudioKitEX
+import AudioToolbox
+import SoundpipeAudioKit
+
+let kAudioUnitSubType_DLSSynth: OSType = 0x646c7320 // 'dls '
+
+struct NoteEvent {
+    let noteNumber: UInt8
+    let time: Double
+    let duration: Double
+}
+=======
 import CoreData
+>>>>>>> 03d234a53710cb5c700e3b7a4480c3d47ea87b7c
 
 struct ScaleTraining: View {
     @Binding var path : NavigationPath
+<<<<<<< HEAD
+    @State private var highlights: [HighlightCell] = []
+=======
     
     @Environment(\.modelContext) var context
     @State var history : History?
+>>>>>>> 03d234a53710cb5c700e3b7a4480c3d47ea87b7c
     @State private var shouldNavigate = false
+    @State private var timePerColumn: Double = 1.0
+    @State private var lastYIndex: Int = 0
+    @State private var lastUpdateTime: Date = .now
+
+
+    @State private var engine = AudioEngine()
+    @State private var sampler = MIDISampler()
+
+    @State private var sequencer = AppleSequencer()
+    @State private var midiPlayer: AVMIDIPlayer?
+    
     
     // MARK: AAA
     @State private var elapsedTime: Double = 0
     @State private var timer: Timer? = nil
     @State private var showCountdownBar = false
 
-    let totalDuration: Double = 20.0
+    @State private var totalDuration = 20.0
     let updateInterval: Double = 0.05
     
     // MARK: AAA
@@ -36,9 +66,24 @@ struct ScaleTraining: View {
     
     let yLabels = ["A5", "G5", "F5", "E5", "D5", "C5", "B4", "A4", "G4", "F4", "E4", "D4", "C4", "B3", "A3", "G3", "F3", "E3", "D3", "C3", "B2", "A2", "G2", "F2","E2", " "]
 
-    let totalColumns = 30
-    let columnWidth: CGFloat = 100
-    let scrollDuration: Double = 30.0
+    var totalColumns: Int {
+        Int(ceil(scrollDuration / visualTimePerColumn))
+    }
+
+    let columnWidth: CGFloat = 50
+    @State private var visualTimePerColumn: Double = 0.2
+    @State private var scrollDuration: Double = 30.0
+    
+    let noteToLabelMap: [UInt8: String] = Dictionary(uniqueKeysWithValues:
+        (48...84).map { ($0, noteNumberToName($0)) }
+    )
+
+    static func noteNumberToName(_ note: UInt8) -> String {
+        let names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+        let octave = Int(note) / 12 - 1
+        let name = names[Int(note) % 12]
+        return "\(name)\(octave)"
+    }
 
     var body: some View {
             GeometryReader { geometry in
@@ -127,7 +172,7 @@ struct ScaleTraining: View {
                         
                         ScrollView(.horizontal, showsIndicators: true) {
                             HStack(spacing: 0) {
-                                CoordinateGridViewScale()
+                                CoordinateGridViewScale(highlightPositions: highlights)
                                     .frame(width: CGFloat(totalColumns) * columnWidth,
                                            height: geometry.size.height * 0.7)
                             }
@@ -142,27 +187,41 @@ struct ScaleTraining: View {
                         Color.white
                         
                         VStack(spacing: 12) {
-                            Button(action: {
+                            Button("start", action: {
                                 if isAnimating {
                                     stopAnimation()
                                     isPitchMovementActive = false
                                     timer?.invalidate()
                                     showCountdownBar = false
+                                    sequencer.stop()
                                 } else {
-                                    startSmoothOffsetScroll()
-                                    isPitchMovementActive = true
-                                    startTimer()
-                                    showCountdownBar = true
+                                    do {
+                                        try engine.start()
+                                        sampler.volume = 2.0
+                                        sequencer.rewind()
+
+                                        let delay: Double = 0.3 // ⏱ Try tweaking between 0.05–0.15
+                                        
+                                        withAnimation(.linear(duration: scrollDuration)) {
+                                            scrollOffset = CGFloat(totalColumns - 1) * columnWidth
+                                        }
+                                        
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                                            sequencer.play()
+                                            startTimer()
+                                        }
+
+                                        print("🎞️ Scroll from 0 → \(scrollOffset) in \(scrollDuration)s")
+                                        isPitchMovementActive = true
+                                        isAnimating = true
+                                        
+                                        showCountdownBar = true
+                                    } catch {
+                                        print("❌ Engine start failed: \(error)")
+                                    }
                                 }
-                            }) {
-                                Text(isAnimating ? "Stop" : "Start")
-                                    .font(.headline)
-                                    .foregroundColor(.white)
-                                    .padding()
-                                    .background(isAnimating ? Color.red : Color.blue)
-                                    .cornerRadius(10)
-                            }
-                            
+                            })
+
                             // Fixed height container to avoid jump
                             ZStack {
                                 if showCountdownBar {
@@ -179,21 +238,70 @@ struct ScaleTraining: View {
             }
             .edgesIgnoringSafeArea(.all)
             .onAppear {
-                print("ScaleTraining appeared")
-
-                AVCaptureDevice.requestAccess(for: .audio) { granted in
-                    DispatchQueue.main.async {
-                        if granted {
-                            pitchManager.onPitchDetected = { pitch in
-                                print("Pitch detected: \(pitch)")
-                                handlePitchChange(pitch)
+                pitchManager.onPitchDetected = { pitch in
+                    let midiNote = frequencyToMIDINote(pitch)
+                        if let label = noteToLabelMap[midiNote],
+                           let newIndex = yLabels.firstIndex(of: label) {
+                            
+                            let now = Date()
+                            let interval = now.timeIntervalSince(lastUpdateTime)
+                            
+                            if abs(newIndex - lastYIndex) >= 1 && interval > 0.05 {
+                                withAnimation(.easeInOut(duration: 0.05)) {
+                                    currentYIndex = newIndex
+                                }
+                                lastYIndex = newIndex
+                                lastUpdateTime = now
                             }
-                            pitchManager.startPitchDetection()
-                        } else {
-                            print("Microphone access denied. Show an alert to the user if needed.")
                         }
+                    
+//                    print("🎤 Pitch: \(pitch) Hz → MIDI: \(midiNote)")
+
+                }
+                if let midiURL = Bundle.main.url(forResource: "no name (2)", withExtension: "mid") {
+                    let events = loadNoteEvents(from: midiURL)
+//                    highlights = mapEventsToGrid(events)
+                    
+                    if let lastNote = events.max(by: { $0.time < $1.time }) {
+                            let midiLength = events.map { $0.time + $0.duration }.max() ?? 1.0
+                            let preferredColumnDuration = 0.2 // 🧠 1 kolom = 0.2 detik → lebih pelan
+                            timePerColumn = preferredColumnDuration
+                        scrollDuration = midiLength * 2
+                            totalDuration = midiLength
+                            highlights = mapEventsToGrid(events)
+                            
+                        print("🧩 visualTimePerColumn: \(visualTimePerColumn)")
+
+                            // totalColumns will be used for visual only
+                            let newTotalColumns = Int(ceil(midiLength / preferredColumnDuration))
+                            print("🎯 Scroll duration: \(scrollDuration)s, totalColumns: \(newTotalColumns)")
+                        }
+
+                        
+
+                    do {
+                        try sampler.loadSoundFont("mysf", preset: 2, bank: 0) // make sure "mysf.sf2" is in the bundle
+                        try sequencer.loadMIDIFile(fromURL: midiURL)
+                        sequencer.setGlobalMIDIOutput(sampler.midiIn)
+                        sequencer.rewind()
+                        sampler.volume = 1.8
+                        engine.output = sampler
+                        try engine.start()
+
+                        // optional: sync scroll duration to sequencer length
+                        let length = sequencer.length
+                        
+
+                    } catch {
+                        print("❌ AppleSequencer setup failed: \(error)")
                     }
                 }
+<<<<<<< HEAD
+
+
+
+
+=======
             }
             .onAppear {
                 history = History(context : context)
@@ -202,6 +310,7 @@ struct ScaleTraining: View {
             .onDisappear {
                 pitchManager.stopPitchDetection()
                 timer?.invalidate()
+>>>>>>> 03d234a53710cb5c700e3b7a4480c3d47ea87b7c
             }
             .navigationDestination(isPresented: $shouldNavigate) {
                 if history != nil {
@@ -225,6 +334,16 @@ struct ScaleTraining: View {
         }
     }
     
+    func frequencyToNoteNumber(_ frequency: Float) -> Int {
+        return Int(round(12 * log2(frequency / 440.0) + 69))
+    }
+
+    func noteNumberToYIndex(_ noteNumber: Int) -> Int? {
+        let noteName = ScaleTraining.noteNumberToName(UInt8(noteNumber))
+        return yLabels.firstIndex(of: noteName)
+    }
+
+    
     // MARK: Without Minimum
     
     func pitchToStep(_ pitch: Float) -> Int {
@@ -237,7 +356,8 @@ struct ScaleTraining: View {
     func startSmoothOffsetScroll() {
         isAnimating = true
         scrollOffset = 0
-        withAnimation(.linear(duration: scrollDuration)) {
+
+        withAnimation(.linear(duration: scrollDuration * 2)) {
             scrollOffset = CGFloat(totalColumns - 1) * columnWidth
         }
     }
@@ -245,7 +365,8 @@ struct ScaleTraining: View {
     // Stop the animation, reset the scroll, and return to the initial position
     func stopAnimation() {
         isAnimating = false
-        withAnimation(.linear(duration: 0)) {  // Add a smooth transition back to the starting position
+        sequencer.stop()
+        withAnimation(.linear(duration: 0)) {
             scrollOffset = 0
         }
     }
@@ -260,6 +381,11 @@ struct ScaleTraining: View {
             currentYIndex += 1  // Move down
         }
     }
+    
+    func frequencyToMIDINote(_ frequency: Float) -> UInt8 {
+        return UInt8(round(69 + 12 * log2(frequency / 440.0)))
+    }
+
     
     func startTimer() {
         elapsedTime = 0
@@ -276,6 +402,74 @@ struct ScaleTraining: View {
         }
     }
     
+    func loadNoteEvents(from url: URL) -> [NoteEvent] {
+            var noteEvents: [NoteEvent] = []
+            do {
+                let midiFile = try MIDIFile(url: url)
+                for track in midiFile.tracks {
+                    var pendingNotes: [UInt8: Double] = [:]
+                    let beatsPerMinute = 120.0
+                    let secondsPerBeat = 60.0 / beatsPerMinute
+                    for event in track.events {
+                        guard let midiEvent = try? MIDIEvent(data: event.data),
+                              let status = midiEvent.status else { continue }
+
+                        let statusByte = status.byte
+                        let type = statusByte & 0xF0
+                        let note = midiEvent.data[safe: 1] ?? 0
+                        let velocity = midiEvent.data[safe: 2] ?? 0
+                        let beatPos = event.positionInBeats ?? 0
+                        let time = beatPos * secondsPerBeat
+
+                        if type == 0x90 && velocity > 0 {
+                            pendingNotes[note] = time
+                        } else if (type == 0x80 || (type == 0x90 && velocity == 0)), let startTime = pendingNotes[note] {
+                            let duration = time - startTime
+                            noteEvents.append(NoteEvent(noteNumber: note, time: startTime, duration: duration))
+                            pendingNotes.removeValue(forKey: note)
+                        }
+                    }
+                }
+            } catch {
+                print("Failed to read MIDI: \(error)")
+            }
+            return noteEvents
+        }
+
+    func mapEventsToGrid(_ events: [NoteEvent]) -> [HighlightCell] {
+        let midiLength = events.map { $0.time + $0.duration }.max() ?? 1.0
+        let timePerColumn = visualTimePerColumn // ✅ pakai yang di state
+
+        return events.compactMap { event in
+            guard let y = noteToLabelMap[event.noteNumber] else { return nil }
+            let x = Int(round(event.time / timePerColumn)) + 1
+            let label = getSolfege(for: event.noteNumber)
+            let durationScaleFactor = 0.3
+            let scaledDuration = event.duration * durationScaleFactor
+            let widthInColumns = max(1, Int(round(event.duration / visualTimePerColumn)))
+            print("🎵 Note \(event.noteNumber) | Start: \(event.time)s | Duration: \(event.duration)s → WidthCols: \(widthInColumns)")
+            print("🎵 Note \(event.noteNumber): \(event.duration)s → widthCols: \(widthInColumns)")
+            return HighlightCell(x: x, y: y, label: label, width: widthInColumns)
+        }
+    }
+
+
+
+
+
+        func getSolfege(for note: UInt8) -> String {
+            switch note % 12 {
+            case 0: return "Do"
+            case 2: return "Re"
+            case 4: return "Mi"
+            case 5: return "Fa"
+            case 7: return "So"
+            case 9: return "La"
+            case 11: return "Ti"
+            default: return "-"
+            }
+        }
+    
 }
 
 // MARK: - Coordinate Grid View
@@ -287,7 +481,9 @@ struct CoordinateGridViewScale: View {
     let yLabels = ["" ,"E2", "F2", "G2", "A2", "B2", "C3", "D3", "E3", "F3", "G3", "A3", "B3",
                    "C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5", "D5", "E5", "F5", "G5", "A5"]
 
-    let columnWidth: CGFloat = 70
+    let columnWidth: CGFloat = 50
+    var highlightPositions: [HighlightCell]
+
 
     // Custom struct to conform to Hashable
     struct GridCell: Hashable {
@@ -347,53 +543,25 @@ struct CoordinateGridViewScale: View {
     // MARK: FUNC WITH TEXT GRID
     func highlightCells(in geo: GeometryProxy) -> some View {
         let rowHeight = geo.size.height / CGFloat(yLabels.count)
-
-        // Each position now includes a label
-        let highlightPositions: [(GridCell, String)] = [
-            (GridCell(x: 2, y: "C3"), "Do"),
-            (GridCell(x: 3, y: "E3"), "Re"),
-            (GridCell(x: 4, y: "C3"), "Do"),
-            (GridCell(x: 6, y: "C3"), "Do"),
-            (GridCell(x: 7, y: "E3"), "Re"),
-            (GridCell(x: 8, y: "G3"), "Mi"),
-            (GridCell(x: 9, y: "E3"), "Re"),
-            (GridCell(x: 10, y: "C3"), "Do"),
-            (GridCell(x: 12, y: "C3"), "Do"),
-            (GridCell(x: 13, y: "E3"), "Re"),
-            (GridCell(x: 14, y: "G3"), "Mi"),
-            (GridCell(x: 15, y: "B3"), "Fa"),
-            (GridCell(x: 16, y: "G3"), "Mi"),
-            (GridCell(x: 17, y: "E3"), "Re"),
-            (GridCell(x: 18, y: "C3"), "Do"),
-            (GridCell(x: 20, y: "C3"), "Do"),
-            (GridCell(x: 21, y: "E3"), "Re"),
-            (GridCell(x: 22, y: "G3"), "Mi"),
-            (GridCell(x: 23, y: "B3"), "Fa"),
-            (GridCell(x: 24, y: "D4"), "So"),
-            (GridCell(x: 25, y: "B3"), "Fa"),
-            (GridCell(x: 26, y: "G3"), "Mi"),
-            (GridCell(x: 27, y: "E3"), "Re"),
-            (GridCell(x: 28, y: "C3"), "Do"),
-        ]
-
+        
+        
         return Group {
-            ForEach(highlightPositions, id: \.0) { (position, label) in
+            ForEach(highlightPositions) { position in
                 if let yIndex = yLabels.firstIndex(of: position.y) {
-                    let xPos = CGFloat(position.x - 1) * columnWidth + columnWidth / 2
+                    let xPos = CGFloat(position.x - 1) * columnWidth + (CGFloat(position.width) * columnWidth) / 2
                     let yPos = geo.size.height - CGFloat(yIndex) * rowHeight - rowHeight / 2
-
+                    
                     ZStack {
-                        // Black note cell with label inside
                         Rectangle()
                             .fill(LinearGradient(
                                 gradient: Gradient(colors: [Color("pink"), Color("ungu")]),
                                 startPoint: .leading,
                                 endPoint: .trailing
                             ))
-                            .frame(width: columnWidth, height: rowHeight)
-                            .cornerRadius(20) // <-- Rounded corners
+                            .frame(width: columnWidth * CGFloat(position.width), height: rowHeight)
+                            .cornerRadius(20)
 
-                        Text(label)
+                        Text(position.label)
                             .font(.system(size: 14, weight: .bold))
                             .foregroundColor(.black)
                     }
@@ -402,114 +570,57 @@ struct CoordinateGridViewScale: View {
             }
         }
     }
+
 }
 
 class PitchManager: ObservableObject {
-    private var audioEngine = AVAudioEngine()
-    private var fftSetup = vDSP.FFT(log2n: 11, radix: .radix2, ofType: DSPSplitComplex.self)! // 2048-point FFT
-    private var bufferSize: AVAudioFrameCount = 2048
-    private var sampleRate: Double
+    private let engine = AudioEngine()
+    private let mic: AudioEngine.InputNode
+    private var pitchTap: PitchTap!
+    private var recentPitches: [Float] = []
+    private let smoothingWindowSize = 5
 
-    var onPitchDetected: ((Float) -> Void)? // <-- callback to ContentView
-    
+    var onPitchDetected: ((Float) -> Void)?
+
     init() {
-            self.audioEngine = AVAudioEngine()
-            self.bufferSize = 2048
-            self.fftSetup = vDSP.FFT(log2n: 11, radix: .radix2, ofType: DSPSplitComplex.self)!
-            self.sampleRate = 44100  // Default fallback
-
-            // Do NOT start audio engine or install tap here
-            // These are deferred until permissions are granted and `startPitchDetection()` is called
+        guard let input = engine.input else {
+            fatalError("❌ No audio input available")
         }
-    
-    func stopPitchDetection() {
-        audioEngine.inputNode.removeTap(onBus: 0)
-        audioEngine.stop()
-        print("Audio engine stopped.")
+        self.mic = input
+
+        pitchTap = PitchTap(mic) { pitch, amp in
+            guard let freq = pitch.first, amp.first ?? 0 > 0.01 else { return }
+
+            let smoothed = self.smoothedPitch(Float(freq))
+            if smoothed > 60 && smoothed < 1500 { // typical human range
+                DispatchQueue.main.async {
+                    self.onPitchDetected?(smoothed)
+                }
+            }
+        }
+
+        pitchTap.start()
+        engine.output = Fader(mic, gain: 0) // silent mic passthrough
+        do {
+            try engine.start()
+        } catch {
+            print("❌ AudioEngine failed to start: \(error)")
+        }
     }
-    
-    func startPitchDetection() {
-            let session = AVAudioSession.sharedInstance()
-            do {
-                try session.setCategory(.playAndRecord, mode: .measurement, options: [.defaultToSpeaker])
-                try session.setActive(true)
 
-                let inputNode = audioEngine.inputNode
-                let format = inputNode.outputFormat(forBus: 0)
-                self.sampleRate = format.sampleRate
 
-                inputNode.installTap(onBus: 0, bufferSize: bufferSize, format: format) { [weak self] buffer, _ in
-                    guard let self = self else { return }
-                    let frequency = self.detectPitch(from: buffer)
-                    DispatchQueue.main.async {
-                        self.onPitchDetected?(frequency)
-                    }
-                }
 
-                try audioEngine.start()
-                print("Audio engine started successfully.")
-            } catch {
-                print("Failed to start audio engine: \(error)")
-            }
+
+
+    private func smoothedPitch(_ newPitch: Float) -> Float {
+        recentPitches.append(newPitch)
+        if recentPitches.count > smoothingWindowSize {
+            recentPitches.removeFirst()
         }
-    // MARK: TO HANDLE .onAppear Error
-    
-    func detectPitch(from buffer: AVAudioPCMBuffer) -> Float {
-            guard let floatChannelData = buffer.floatChannelData else { return 0.0 }
-            let frameCount = Int(buffer.frameLength)
-            let samples = Array(UnsafeBufferPointer(start: floatChannelData[0], count: frameCount))
-
-            var real = [Float](repeating: 0.0, count: samples.count)
-            var imag = [Float](repeating: 0.0, count: samples.count)
-            var splitComplex = DSPSplitComplex(realp: &real, imagp: &imag)
-
-            samples.withUnsafeBufferPointer { ptr in
-                ptr.baseAddress!.withMemoryRebound(to: DSPComplex.self, capacity: samples.count) { complexPtr in
-                    vDSP_ctoz(complexPtr, 2, &splitComplex, 1, vDSP_Length(samples.count / 2))
-                }
-            }
-
-            let log2n = vDSP_Length(log2(Float(samples.count)))
-            let fftSetup = vDSP_create_fftsetup(log2n, Int32(kFFTRadix2))!
-            vDSP_fft_zrip(fftSetup, &splitComplex, 1, log2n, Int32(FFT_FORWARD))
-
-            var magnitudes = [Float](repeating: 0.0, count: samples.count / 2)
-            vDSP_zvmags(&splitComplex, 1, &magnitudes, 1, vDSP_Length(samples.count / 2))
-
-            var maxMag: Float = 0.0
-            var maxIndex: vDSP_Length = 0
-            vDSP_maxvi(magnitudes, 1, &maxMag, &maxIndex, vDSP_Length(samples.count / 2))
-
-            let sampleRate = buffer.format.sampleRate
-            let frequency = Float(maxIndex) * Float(sampleRate) / Float(samples.count)
-
-            vDSP_destroy_fftsetup(fftSetup)
-            return frequency
-        }
-
-    private func processBuffer(_ buffer: AVAudioPCMBuffer) {
-        guard let channelData = buffer.floatChannelData?[0] else { return }
-        let frameCount = Int(buffer.frameLength)
-
-        var magnitudes = [Float](repeating: 0.0, count: frameCount / 2)
-        var real = [Float](repeating: 0.0, count: frameCount)
-        var imag = [Float](repeating: 0.0, count: frameCount)
-        channelData.withMemoryRebound(to: DSPComplex.self, capacity: frameCount) { complexData in
-            var splitComplex = DSPSplitComplex(realp: &real, imagp: &imag)
-            vDSP_ctoz(complexData, 2, &splitComplex, 1, vDSP_Length(frameCount / 2))
-            fftSetup.forward(input: splitComplex, output: &splitComplex)
-            vDSP_zvmags(&splitComplex, 1, &magnitudes, 1, vDSP_Length(frameCount / 2))
-        }
-
-        // Get frequency with max magnitude
-        if let maxIndex = magnitudes.firstIndex(of: magnitudes.max() ?? 0) {
-            let frequency = Float(maxIndex) * Float(sampleRate) / Float(frameCount)
-            DispatchQueue.main.async {
-                self.onPitchDetected?(frequency)
-            }
-        }
+        return recentPitches.reduce(0, +) / Float(recentPitches.count)
     }
 }
+
 
 extension Collection {
     subscript(safe index: Index) -> Element? {
@@ -550,6 +661,6 @@ struct CountdownProgressBar: View {
     }
 }
 
-//#Preview {
-//    ScaleTraining(path: .constant(NavigationPath()))
-//}
+#Preview {
+    ScaleTraining(path: .constant(NavigationPath()))
+}
