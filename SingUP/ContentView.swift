@@ -57,7 +57,7 @@ struct ContentView: View {
                 } else if route == "liptrills"{
                     WarmUpSessionScreen(path : $path)
                         .modelContainer(for : [UserProfile.self])
-                } else if route == "tonguetrill"{
+                } else if route == "tonguetrills"{
                     WarmUpSessionScreen(path : $path)
                         .modelContainer(for : [UserProfile.self, VocalTraining.self])
                 } else if route == "scale"{
