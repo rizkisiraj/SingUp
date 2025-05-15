@@ -38,7 +38,6 @@ struct WarmUpGuideScreen: View {
             .padding()
             Spacer()
         }
-        .navigationTitle("warmU")
         .padding()
     }
 }
