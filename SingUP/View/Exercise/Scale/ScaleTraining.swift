@@ -230,6 +230,7 @@ struct ScaleTraining: View {
             }
             .edgesIgnoringSafeArea(.all)
             .onAppear {
+                history = History(context : context)
                 pitchManager.onPitchDetected = { pitch in
                     let midiNote = frequencyToMIDINote(pitch)
                         if let label = noteToLabelMap[midiNote],
