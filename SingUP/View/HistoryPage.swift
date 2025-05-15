@@ -129,15 +129,15 @@ struct LineChartView: View {
                 .padding(.horizontal)
             // Native List Below Chart
             HStack {
-                Text("Exercise")
+                Text("Recent Exercise")
                     .font(.title2.bold())
-                Spacer()
-                Text("Accuracy")
-                    .font(.title2.bold())
-                
+               Spacer()
             }
-            .padding()
+            .padding(.horizontal)
+            .padding(.top)
             
+            Divider()
+                .padding(.horizontal)
             VStack{
                 
                 if history?.fetchAll(type : selectedExercise == .scale ? 0 : 1).count ?? 0 == 0{
@@ -168,6 +168,8 @@ struct LineChartView: View {
                                     Text("\(Int(hist.accuracy))%")
                                         .font(.title.bold())
                                     Text("Accuracy")
+                                        .font(.caption)
+                                        
                                 }
                             }
                             .padding()

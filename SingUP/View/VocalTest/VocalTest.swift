@@ -170,6 +170,7 @@ struct VocalTest: View {
                     }
                 }
 //
+                path.removeLast(1)
                 path.append(type == 0 ? "vtest2" : "vocalresult")
             }
         ){
