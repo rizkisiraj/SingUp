@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct BreathingDoneScreen: View {
+struct WarmUpDoneScreen: View {
     @Binding var path: NavigationPath
     
     var body: some View {
@@ -16,7 +16,7 @@ struct BreathingDoneScreen: View {
             Text("Well Done!")
                 .font(.title)
                 .fontWeight(.bold)
-            Text("You have complete Breath Warm-Up")
+            Text("You have complete \(warmup.title) Warm-Up")
                 .padding(.top, 1)
             Spacer()
             Image(.breathDoneIcon)
@@ -32,7 +32,8 @@ struct BreathingDoneScreen: View {
             .buttonStyle(.borderedProminent)
             .padding()
             Button("Re-test the warm up", systemImage: "arrow.clockwise") {
-                
+                path.removeLast(path.count)
+                path.append(warmup.path)
             }
             Spacer()
         }
@@ -48,3 +49,7 @@ struct BreathingDoneScreen: View {
 //        BreathingDoneScreen(.constant())
 //    }
 //}
+
+#Preview {
+    WarmUpDoneScreen(path: .constant(NavigationPath()))
+}

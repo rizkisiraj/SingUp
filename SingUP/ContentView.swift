@@ -15,6 +15,8 @@ import AVFoundation
 
 // MARK: PEMBATAS-------------------------
 
+var warmup:WarmUp = listOfWarmUp[0]
+
 struct ContentView: View {
     @State private var path = NavigationPath()
     
@@ -41,7 +43,7 @@ struct ContentView: View {
                     VocalTest(path : $path, type : 1)
                         .modelContainer(for : [UserProfile.self])
                 } else if route == "warmupdone"{
-                    BreathingDoneScreen(path: $path)
+                    WarmUpDoneScreen(path: $path)
                 } else if route == "vocalresult"{
                     VocalResult(path : $path)
                         .modelContainer(for : [UserProfile.self])
@@ -50,13 +52,13 @@ struct ContentView: View {
                 } else if route == "warmupdone" {
                     BreathingView(path: $path)
                 } else if route == "humming"{
-                    WarmUpSessionScreen()
+                    WarmUpSessionScreen(path : $path)
                         .modelContainer(for : [UserProfile.self])
                 } else if route == "liptrills"{
-                    WarmUpSessionScreen()
+                    WarmUpSessionScreen(path : $path)
                         .modelContainer(for : [UserProfile.self])
                 } else if route == "tonguetrill"{
-                    WarmUpSessionScreen()
+                    WarmUpSessionScreen(path : $path)
                         .modelContainer(for : [UserProfile.self, VocalTraining.self])
                 } else if route == "scale"{
                     ScaleTraining(path: $path)
