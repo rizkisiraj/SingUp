@@ -282,10 +282,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"SingUP/Preview Content\"";
-				DEVELOPMENT_TEAM = FY2ZUW5Q3B;
+				DEVELOPMENT_TEAM = 6DQ5YJWXT3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SingUP/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = SingUP;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Kami memerlukan akses mikrofon untuk mendeteksi frekuensi suara.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -318,10 +320,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"SingUP/Preview Content\"";
-				DEVELOPMENT_TEAM = FY2ZUW5Q3B;
+				DEVELOPMENT_TEAM = 6DQ5YJWXT3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SingUP/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = SingUP;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Kami memerlukan akses mikrofon untuk mendeteksi frekuensi suara.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
