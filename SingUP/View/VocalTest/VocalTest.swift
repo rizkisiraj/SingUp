@@ -20,6 +20,9 @@ struct VocalTest: View {
     @Environment(\.modelContext) private var context
     @Query var userProfile : [UserProfile]
     @State var isRecording = false
+    @State private var animateStroke = false
+    @State private var trimEnd: CGFloat = 0
+    
     
     
     func getPeakFreqChord() -> String{
@@ -35,7 +38,7 @@ struct VocalTest: View {
         }
         return "\(chord[  getChordByFrequency(freq : peakFreq)[0]  ])\( getChordByFrequency(freq : peakFreq)[1] )";
     }
-   
+    
     var taskRepeater = TaskRepeater()
     
     func increment() {
@@ -77,17 +80,17 @@ struct VocalTest: View {
         }
         .onDisappear(perform: {
             
-          if type == 1{
-              detector.stop()
-          }
-                }
-         )
+            if type == 1{
+                detector.stop()
+            }
+        }
+        )
         
         
         Button(action : {}){
             Image(systemName: "arrowtriangle.\(type==0 ? "down" : "up").circle.fill")
                 .foregroundStyle(type == 0 ? .blue : Color("Highest"))
-
+            
             Text("Sing \(type==0 ? "Lower" : "Higher")")
                 .foregroundStyle(type == 0 ? .blue : Color("Highest"))
         }
@@ -101,9 +104,9 @@ struct VocalTest: View {
         .padding(.vertical, 0)
         
         Text("\(peakFreq < 99999 ? peakFreq : 0) Hz")
-                        .font(.title)
-                        .foregroundColor(type == 0 ?.blue : Color("Highest"))
-                        .padding(20)
+            .font(.title)
+            .foregroundColor(type == 0 ?.blue : Color("Highest"))
+            .padding(20)
         Image(systemName: "arrowtriangle.down.fill")
             .foregroundStyle(.purple)
             .font(.title.bold())
@@ -113,48 +116,53 @@ struct VocalTest: View {
             .padding(.horizontal, 20)
         
         HStack(spacing : 0){
-                Text("\(chord[ (chord.count + getChord()[0]-2) % chord.count ])\(getChord()[1])")
-                    .font(.title2)
-                    .padding()
-                
-                Text("\(chord[ (chord.count + getChord()[0]-1) % chord.count ])\(getChord()[1])")
-                    .font(.title2)
-                    .padding()
-                
-
-                Text("\(chord[getChord()[0]])\(getChord()[1])")
-                .font(.largeTitle)
-                    .bold(true)
-                    .multilineTextAlignment(.center)
-                    .padding()
-                
-                
-                Text("\(chord[ (getChord()[0]+1) % chord.count ])\(getChord()[1])")
-                    .font(.title2)
-                    .padding()
-                
-                Text("\(chord[ (getChord()[0]+2) % chord.count ])\(getChord()[1])")
-                    .font(.title2)
-                    .padding()
-                
-            }
-            .onAppear{
-                key = getChordByFrequency(freq: Int(detector.frequency))[0]
-                octave = getChordByFrequency(freq: Int(detector.frequency))[1]
-                peakFreq = type == 0 ? 99999 : 0
-                
-            }
-           
+            Text("\(chord[ (chord.count + getChord()[0]-2) % chord.count ])\(getChord()[1])")
+                .font(.subheadline)
+                        .opacity(0.5)
+                        .padding(18)
+            
+            Text("\(chord[ (chord.count + getChord()[0]-1) % chord.count ])\(getChord()[1])")
+                .font(.subheadline)
+                        .opacity(0.5)
+                        .padding(18)
+            
+            
+            Text("\(chord[getChord()[0]])\(getChord()[1])")
+                .font(.system(size: 70, weight: .bold, design: .default))
+                .foregroundColor(.primary)
+                .padding(10)
+            
+            
+            Text("\(chord[ (getChord()[0]+1) % chord.count ])\(getChord()[1])")
+                .font(.subheadline)
+                        .opacity(0.5)
+                        .padding(18)
+            
+            Text("\(chord[ (getChord()[0]+2) % chord.count ])\(getChord()[1])")
+                .font(.subheadline)
+                        .opacity(0.5)
+                        .padding(18)
+            
+        }
+        .onAppear{
+            key = getChordByFrequency(freq: Int(detector.frequency))[0]
+            octave = getChordByFrequency(freq: Int(detector.frequency))[1]
+            peakFreq = type == 0 ? 99999 : 0
+            
+        }
+        
         Divider()
             .padding(.horizontal, 20)
             .padding(.bottom , 10)
-       
+        
         
         Button(
             action : {
                 print("Ended")
-                    
+                animateStroke = false
+                trimEnd = 0
                 isRecording = false
+                
                 if let prof = userProfile.first{
                     if type == 0 {
                         prof.lowestFrequency = Float(peakFreq)
@@ -164,63 +172,56 @@ struct VocalTest: View {
                     do{
                         try context.save()
                         print("Berhasil menyimpan hasil test")
-
+                        
                     }catch{
                         print("Gagal menyimpan hasil test \(error)")
                     }
                 }
-//
+                //
                 path.removeLast(1)
                 path.append(type == 0 ? "vtest2" : "vocalresult")
             }
         ){
-            ZStack{
+            ZStack {
+                // Background stroke animation circle
+                Circle()
+                    .trim(from: 0, to: trimEnd)
+                    .stroke(Color.blue, lineWidth: 8)
+                    .rotationEffect(.degrees(-90)) // Start at 12 o'clock
+                    .frame(width: 110, height: 110)
+                    .animation(.linear(duration: 4), value: trimEnd)
+                
+                // Static outer circle
                 Circle()
                     .stroke(lineWidth: 2)
                     .foregroundStyle(.black)
                     .frame(width: 100, height: 100)
-                    .backgroundStyle(isRecording ? .blue : .clear)
-
+                
+                // Mic icon
                 Image(systemName: "microphone.fill")
                     .resizable()
                     .frame(width: 30, height: 45)
                     .foregroundStyle(.black)
             }
-           
+            
         }
         .simultaneousGesture(
             LongPressGesture(minimumDuration: 0.2)
                 .onEnded { _ in
                     isRecording = true
                     print("Started")
+                    
+                    // Start stroke animation
+                    animateStroke = true
+                    trimEnd = 1.0
                 }
         )
+        .buttonStyle(PlainButtonStyle())
         .padding(.top, 30)
         
         Text("Hold to record, \nand release when you're done.")
             .multilineTextAlignment(.center)
             .padding(.top, 10)
-        
-       
-//        Button(
-//            action : {
-//                
-//            }
-//        ){
-//            Text("Continue")
-//                .foregroundStyle(.white)
-//        }
-//        .padding(15)
-//        .padding(.horizontal, 100)
-//        .background(
-//            RoundedRectangle(cornerRadius: 10)
-//                .fill( ( (peakFreq == 0 || peakFreq == 99999) && !isRecording ) ? .gray :Color.blue)
-//        )
-//        .padding(.top, 10)
-//
-//        .disabled( ( (peakFreq == 0 || peakFreq == 99999) && !isRecording) )
-        
-        
         
         HStack{
             Text("Your\(type == 0 ? " Lowest" : " Highest") chord is : ")
@@ -228,10 +229,7 @@ struct VocalTest: View {
                 .font(.title2.bold())
         }
         .opacity(0)
-       
-        
     }
-        
 }
 
 #Preview{

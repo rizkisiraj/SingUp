@@ -14,9 +14,12 @@ struct MicPermissionView: View {
     @State private var showSettingsAlert = false
     
     @State private var reloadID = UUID() // <- Add this
-
+    
     var body: some View {
         ZStack {
+            Color.white // Full-screen white background
+                .ignoresSafeArea()
+            
             if showSplash {
                 SplashScreen()
                     .transition(.opacity)
@@ -37,6 +40,7 @@ struct MicPermissionView: View {
             }
         }
         .id(reloadID) // <- Add this to re-render the whole view
+        .preferredColorScheme(.light) // <- Force light mode
     }
     
     // Helper function to check if microphone permission is granted
