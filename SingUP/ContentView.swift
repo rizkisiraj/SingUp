@@ -20,10 +20,15 @@ var warmup:WarmUp = listOfWarmUp[0]
 struct ContentView: View {
     @State private var path = NavigationPath()
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+<<<<<<< HEAD
 
     
     var body: some View {
         
+=======
+    
+    var body: some View {
+>>>>>>> ca811cd9ecc720e7d7c5a6b3d5e7b9c7edf0586f
         NavigationStack(path: $path) {
             Group {
                 if hasCompletedOnboarding {
@@ -61,14 +66,20 @@ struct ContentView: View {
                 } else if route == "warmupdone" {
                     BreathingView(path: $path)
                 } else if route == "humming"{
-                    WarmUpSessionScreen(path : $path)
+                    WarmUpSessionScreen(path: $path)
                         .modelContainer(for : [UserProfile.self])
                 } else if route == "liptrills"{
-                    WarmUpSessionScreen(path : $path)
+                    WarmUpSessionScreen(path: $path)
                         .modelContainer(for : [UserProfile.self])
+                } else if route == "tonguetrill"{
+                    WarmUpSessionScreen(path: $path)
+                        .modelContainer(for : [UserProfile.self])
+<<<<<<< HEAD
                 } else if route == "tonguetrills"{
                     WarmUpSessionScreen(path : $path)
                         .modelContainer(for : [UserProfile.self])
+=======
+>>>>>>> ca811cd9ecc720e7d7c5a6b3d5e7b9c7edf0586f
                 } else if route == "scale"{
                     ScaleTraining(path: $path)
                         .modelContainer(for : [UserProfile.self])
