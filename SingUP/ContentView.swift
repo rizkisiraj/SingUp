@@ -20,6 +20,7 @@ var warmup:WarmUp = listOfWarmUp[0]
 struct ContentView: View {
     @State private var path = NavigationPath()
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+
     
     var body: some View {
         NavigationStack(path: $path) {
@@ -83,7 +84,6 @@ struct ContentView: View {
         }
     }
 }
-
 #Preview {
     ContentView()
 }
