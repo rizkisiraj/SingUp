@@ -30,8 +30,7 @@ struct ScaleTraining: View {
     @State private var timePerColumn: Double = 1.0
     @State private var lastYIndex: Int = 0
     @State private var lastUpdateTime: Date = .now
-    @Environment(\.modelContext) var context
-        @State var history : History?
+
 
     @State private var engine = AudioEngine()
     @State private var sampler = MIDISampler()
@@ -44,7 +43,7 @@ struct ScaleTraining: View {
     @State private var elapsedTime: Double = 0
     @State private var timer: Timer? = nil
     @State private var showCountdownBar = false
-
+    @State private var isNarrating = true
     @State private var totalDuration = 20.0
     let updateInterval: Double = 0.05
     
@@ -54,6 +53,8 @@ struct ScaleTraining: View {
     @State private var currentYIndex: Int = 19 // Index for "C3" as starting point
     @StateObject private var pitchManager = PitchManager()
     @State private var isPitchMovementActive = false
+    @State private var interpolatedY: CGFloat = 0 // nilai antar yIndex
+
 
     
     let yLabels = ["A5", "G5", "F5", "E5", "D5", "C5", "B4", "A4", "G4", "F4", "E4", "D4", "C4", "B3", "A3", "G3", "F3", "E3", "D3", "C3", "B2", "A2", "G2", "F2","E2", " "]
@@ -108,6 +109,8 @@ struct ScaleTraining: View {
                         // MARK: GREEN
                         GeometryReader { geo in
                             let cellHeight = geo.size.height / CGFloat(yLabels.count)
+                            let rowHeight = geo.size.height / CGFloat(yLabels.count)
+
                             
                             ZStack(alignment: .top) {
                                 // Center vertical line (full height)
@@ -140,7 +143,7 @@ struct ScaleTraining: View {
                                                 .frame(width: 22, height: 22)
                                                 .overlay(
                                                     Circle()
-                                                        .stroke(Color.black.opacity(0.6), lineWidth: 1) // Black outline
+                                                        .stroke(Color.black.opacity(0.6), lineWidth: 1)
                                                 )
                                             
                                             Image(systemName: "music.note")
@@ -151,9 +154,9 @@ struct ScaleTraining: View {
                                         }
                                         .position(
                                             x: geo.size.width / 2,
-                                            y: cellHeight * CGFloat(index) + cellHeight / 2
+                                            y: rowHeight * interpolatedY + rowHeight / 2
                                         )
-                                        .zIndex(1)
+                                        .animation(.easeOut(duration: 0.07), value: interpolatedY)
                                     }
                                 }
                             }
@@ -230,25 +233,17 @@ struct ScaleTraining: View {
             }
             .edgesIgnoringSafeArea(.all)
             .onAppear {
-                history = History(context : context)
                 pitchManager.onPitchDetected = { pitch in
-                    let midiNote = frequencyToMIDINote(pitch)
-                        if let label = noteToLabelMap[midiNote],
-                           let newIndex = yLabels.firstIndex(of: label) {
-                            
-                            let now = Date()
-                            let interval = now.timeIntervalSince(lastUpdateTime)
-                            
-                            if abs(newIndex - lastYIndex) >= 1 && interval > 0.05 {
-                                withAnimation(.easeInOut(duration: 0.05)) {
-                                    currentYIndex = newIndex
-                                }
-                                lastYIndex = newIndex
-                                lastUpdateTime = now
-                            }
+                    let midi = 69 + 12 * log2(Double(pitch) / 440)
+                    let minMIDINote = 40  // E2
+                    let maxMIDINote = 81  // A5
+
+                    if !isNarrating {
+                        if midi >= Double(minMIDINote), midi <= Double(maxMIDINote) {
+                            let scale = (midi - Double(minMIDINote)) / Double(maxMIDINote - minMIDINote)
+                            interpolatedY = CGFloat(1.0 - scale) * CGFloat(yLabels.count - 1)
                         }
-                    
-//                    print("🎤 Pitch: \(pitch) Hz → MIDI: \(midiNote)")
+                    }
 
                 }
                 if let midiURL = Bundle.main.url(forResource: "no name (2)", withExtension: "mid") {
@@ -294,8 +289,15 @@ struct ScaleTraining: View {
 
 
             }
+            .overlay {
+                if isNarrating {
+                    WelcomeChatOverlay {
+                        isNarrating = false
+                    }
+                }
+            }
             .navigationDestination(isPresented: $shouldNavigate) {
-                ScaleCompleted(history : $history, path: $path) // <- replace with your actual destination view
+                ScaleCompleted(history: $history, path: $path) // <- replace with your actual destination view
             }
         }
         
@@ -312,6 +314,8 @@ struct ScaleTraining: View {
             currentYIndex += 1
         }
     }
+    @Environment(\.modelContext) var context
+        @State var history : History?
     
     func frequencyToNoteNumber(_ frequency: Float) -> Int {
         return Int(round(12 * log2(frequency / 440.0) + 69))
@@ -320,6 +324,21 @@ struct ScaleTraining: View {
     func noteNumberToYIndex(_ noteNumber: Int) -> Int? {
         let noteName = ScaleTraining.noteNumberToName(UInt8(noteNumber))
         return yLabels.firstIndex(of: noteName)
+    }
+
+    func yLabelToMIDINote(_ label: String) -> Int? {
+        let names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+        let regex = try! NSRegularExpression(pattern: "([A-G]#?)(\\d)")
+        guard let match = regex.firstMatch(in: label, range: NSRange(label.startIndex..., in: label)),
+              let nameRange = Range(match.range(at: 1), in: label),
+              let octaveRange = Range(match.range(at: 2), in: label)
+        else { return nil }
+
+        let name = String(label[nameRange])
+        let octave = Int(label[octaveRange]) ?? 0
+        guard let noteIndex = names.firstIndex(of: name) else { return nil }
+
+        return (octave + 1) * 12 + noteIndex
     }
 
     
@@ -557,7 +576,7 @@ class PitchManager: ObservableObject {
     private let mic: AudioEngine.InputNode
     private var pitchTap: PitchTap!
     private var recentPitches: [Float] = []
-    private let smoothingWindowSize = 5
+    private let smoothingWindowSize = 3
 
     var onPitchDetected: ((Float) -> Void)?
 
@@ -640,6 +659,7 @@ struct CountdownProgressBar: View {
     }
 }
 
-#Preview {
-    ScaleTraining(path: .constant(NavigationPath()))
-}
+//#Preview {
+//    ScaleTraining(path: .constant(NavigationPath()))
+//}
+
