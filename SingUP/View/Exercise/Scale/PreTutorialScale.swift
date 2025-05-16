@@ -146,6 +146,6 @@ struct RotatingChatOverlay: View {
     }
 }
 
-#Preview {
-    WelcomeChatOverlay(onDismiss: {})
-}
+//#Preview {
+//    WelcomeChatOverlay(onDismiss: {})
+//}

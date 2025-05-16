@@ -31,13 +31,12 @@ struct ScaleTraining: View {
     @State private var lastYIndex: Int = 0
     @State private var lastUpdateTime: Date = .now
 
-
     @State private var engine = AudioEngine()
     @State private var sampler = MIDISampler()
 
     @State private var sequencer = AppleSequencer()
     @State private var midiPlayer: AVMIDIPlayer?
-    
+    @State private var introPlayer: AVAudioPlayer? = nil
     
     // MARK: AAA
     @State private var elapsedTime: Double = 0
@@ -182,39 +181,13 @@ struct ScaleTraining: View {
                         Color.white
                         
                         VStack(spacing: 12) {
-                            Button("start", action: {
-                                if isAnimating {
-                                    stopAnimation()
-                                    isPitchMovementActive = false
-                                    timer?.invalidate()
-                                    showCountdownBar = false
-                                    sequencer.stop()
-                                } else {
-                                    do {
-                                        try engine.start()
-                                        sampler.volume = 2.0
-                                        sequencer.rewind()
-
-                                        let delay: Double = 0.3 // ⏱ Try tweaking between 0.05–0.15
-                                        
-                                        withAnimation(.linear(duration: scrollDuration)) {
-                                            scrollOffset = CGFloat(totalColumns - 1) * columnWidth
-                                        }
-                                        
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                                            sequencer.play()
-                                            startTimer()
-                                        }
-
-                                        print("🎞️ Scroll from 0 → \(scrollOffset) in \(scrollDuration)s")
-                                        isPitchMovementActive = true
-                                        isAnimating = true
-                                        
-                                        showCountdownBar = true
-                                    } catch {
-                                        print("❌ Engine start failed: \(error)")
-                                    }
-                                }
+                            Button("Stop", action: {
+                                stopAnimation()
+                                isPitchMovementActive = false
+                                timer?.invalidate()
+                                showCountdownBar = false
+                                introPlayer?.stop()
+                                introPlayer = nil
                             })
 
                             // Fixed height container to avoid jump
@@ -254,11 +227,11 @@ struct ScaleTraining: View {
                             let midiLength = events.map { $0.time + $0.duration }.max() ?? 1.0
                             let preferredColumnDuration = 0.2 // 🧠 1 kolom = 0.2 detik → lebih pelan
                             timePerColumn = preferredColumnDuration
-                        scrollDuration = midiLength * 2
+                            scrollDuration = midiLength * 2
                             totalDuration = midiLength
                             highlights = mapEventsToGrid(events)
                             
-                        print("🧩 visualTimePerColumn: \(visualTimePerColumn)")
+                            print("🧩 visualTimePerColumn: \(visualTimePerColumn)")
 
                             // totalColumns will be used for visual only
                             let newTotalColumns = Int(ceil(midiLength / preferredColumnDuration))
@@ -268,16 +241,17 @@ struct ScaleTraining: View {
                         
 
                     do {
-                        try sampler.loadSoundFont("mysf", preset: 2, bank: 0) // make sure "mysf.sf2" is in the bundle
-                        try sequencer.loadMIDIFile(fromURL: midiURL)
-                        sequencer.setGlobalMIDIOutput(sampler.midiIn)
-                        sequencer.rewind()
-                        sampler.volume = 1.8
-                        engine.output = sampler
-                        try engine.start()
-
-                        // optional: sync scroll duration to sequencer length
-                        let length = sequencer.length
+//                        try sampler.loadSoundFont("mysf", preset: 2, bank: 0) // make sure "mysf.sf2" is in the bundle
+//                        try sequencer.loadMIDIFile(fromURL: midiURL)
+//                        sequencer.setGlobalMIDIOutput(sampler.midiIn)
+//                        sequencer.rewind()
+//                        sampler.volume = 1.8
+//                        engine.output = sampler
+//                        try engine.start()
+//
+//                        // optional: sync scroll duration to sequencer length
+//                        let length = sequencer.length
+//                        playSoundAudio()
                         
 
                     } catch {
@@ -293,6 +267,39 @@ struct ScaleTraining: View {
                 if isNarrating {
                     WelcomeChatOverlay {
                         isNarrating = false
+                        if isAnimating {
+                            stopAnimation()
+                            isPitchMovementActive = false
+                            timer?.invalidate()
+                            showCountdownBar = false
+                            sequencer.stop()
+                        } else {
+                            do {
+                                try engine.start()
+                                sampler.volume = 2.0
+                                sequencer.rewind()
+
+                                let delay: Double = 0.3 // ⏱ Try tweaking between 0.05–0.15
+                                
+                                withAnimation(.linear(duration: scrollDuration)) {
+                                    scrollOffset = CGFloat(totalColumns - 1) * columnWidth
+                                }
+                                
+                                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                                    playSoundAudio()
+                                    startTimer()
+                                }
+
+                                print("🎞️ Scroll from 0 → \(scrollOffset) in \(scrollDuration)s")
+                                isPitchMovementActive = true
+                                isAnimating = true
+                                
+                                showCountdownBar = true
+                            } catch {
+                                print("❌ Engine start failed: \(error)")
+                            }
+                        }
+                        
                     }
                 }
             }
@@ -319,6 +326,19 @@ struct ScaleTraining: View {
     
     func frequencyToNoteNumber(_ frequency: Float) -> Int {
         return Int(round(12 * log2(frequency / 440.0) + 69))
+    }
+    
+    func playSoundAudio() {
+        guard let url = Bundle.main.url(forResource: "cobaan", withExtension: "mp3") else { return }
+        do {
+            introPlayer = try AVAudioPlayer(contentsOf: url)
+            DispatchQueue.main.asyncAfter(deadline: .now()) {
+                introPlayer?.play()
+            }
+                        
+        } catch {
+            print("Failed to play intro audio: \(error)")
+        }
     }
 
     func noteNumberToYIndex(_ noteNumber: Int) -> Int? {
