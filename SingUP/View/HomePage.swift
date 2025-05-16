@@ -150,8 +150,8 @@ struct HomePage:View{
                     }
                 }
                 .tabItem {
-                    Image(systemName: "house.fill")
-                    Text("Home")
+                    Image(systemName: "music.microphone")
+                    Text("Train")
                 }
                 .tag(0)
                 
