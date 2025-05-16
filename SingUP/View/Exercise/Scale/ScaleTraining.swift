@@ -153,7 +153,7 @@ struct ScaleTraining: View {
                                         }
                                         .position(
                                             x: geo.size.width / 2,
-                                            y: rowHeight * interpolatedY + rowHeight / 2
+                                            y: rowHeight * (interpolatedY + 0.5)
                                         )
                                         .animation(.easeOut(duration: 0.07), value: interpolatedY)
                                     }
@@ -212,10 +212,12 @@ struct ScaleTraining: View {
                     let maxMIDINote = 81  // A5
 
                     if !isNarrating {
-                        if midi >= Double(minMIDINote), midi <= Double(maxMIDINote) {
-                            let scale = (midi - Double(minMIDINote)) / Double(maxMIDINote - minMIDINote)
-                            interpolatedY = CGFloat(1.0 - scale) * CGFloat(yLabels.count - 1)
-                        }
+                        let roundedMIDINote = UInt8(round(midi))
+                                let noteName = ScaleTraining.noteNumberToName(roundedMIDINote)
+
+                                if let index = yLabels.firstIndex(of: noteName) {
+                                    interpolatedY = CGFloat(index)
+                                }
                     }
 
                 }
@@ -643,6 +645,12 @@ class PitchManager: ObservableObject {
 extension Collection {
     subscript(safe index: Index) -> Element? {
         indices.contains(index) ? self[index] : nil
+    }
+}
+
+extension Comparable {
+    func clamped(to limits: ClosedRange<Self>) -> Self {
+        return min(max(self, limits.lowerBound), limits.upperBound)
     }
 }
 
