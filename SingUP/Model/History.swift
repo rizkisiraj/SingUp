@@ -67,7 +67,9 @@ class History{
     
     func fetchAll(type: Int) -> [VocalTraining] {
         let predicate = #Predicate<VocalTraining> { $0.exercise == type }
-        let query = FetchDescriptor(predicate: predicate)
+        let sort = [SortDescriptor(\VocalTraining.date, order: .reverse)] // Urut dari terbaru
+          
+       let query = FetchDescriptor(predicate: predicate, sortBy: sort)
 
         do {
             self.vocalTraining = try context.fetch(query)

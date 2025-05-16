@@ -8,7 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		088DE2B32DCDE9E3001DB807 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 088DE2B22DCDE9E3001DB807 /* Lottie */; };
-		7EE026602DD5A5BE00C12496 /* SoundpipeAudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7EE0265F2DD5A5BE00C12496 /* SoundpipeAudioKit */; };
+		08BF1ED82DD5EEA6005FC0D9 /* AudioKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 08BF1ED72DD5EEA6005FC0D9 /* AudioKitUI */; };
+		08BF1EE12DD5EFB7005FC0D9 /* SoundpipeAudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 08BF1EE02DD5EFB7005FC0D9 /* SoundpipeAudioKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -16,7 +17,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		7EE0266B2DD5AA0200C12496 /* Exceptions for "SingUP" folder in "SingUP" target */ = {
+		08BF1ED52DD5EDFC005FC0D9 /* Exceptions for "SingUP" folder in "SingUP" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -29,7 +30,7 @@
 		08DE93D02DC1069D00089B3F /* SingUP */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				7EE0266B2DD5AA0200C12496 /* Exceptions for "SingUP" folder in "SingUP" target */,
+				08BF1ED52DD5EDFC005FC0D9 /* Exceptions for "SingUP" folder in "SingUP" target */,
 			);
 			path = SingUP;
 			sourceTree = "<group>";
@@ -41,7 +42,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7EE026602DD5A5BE00C12496 /* SoundpipeAudioKit in Frameworks */,
+				08BF1EE12DD5EFB7005FC0D9 /* SoundpipeAudioKit in Frameworks */,
+				08BF1ED82DD5EEA6005FC0D9 /* AudioKitUI in Frameworks */,
 				088DE2B32DCDE9E3001DB807 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -86,7 +88,8 @@
 			name = SingUP;
 			packageProductDependencies = (
 				088DE2B22DCDE9E3001DB807 /* Lottie */,
-				7EE0265F2DD5A5BE00C12496 /* SoundpipeAudioKit */,
+				08BF1ED72DD5EEA6005FC0D9 /* AudioKitUI */,
+				08BF1EE02DD5EFB7005FC0D9 /* SoundpipeAudioKit */,
 			);
 			productName = SingUP;
 			productReference = 08DE93CE2DC1069D00089B3F /* SingUP.app */;
@@ -118,7 +121,8 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				088DE2B12DCDE9E3001DB807 /* XCRemoteSwiftPackageReference "lottie-spm" */,
-				7EE0265E2DD5A5BE00C12496 /* XCRemoteSwiftPackageReference "SoundpipeAudioKit" */,
+				08BF1ED62DD5EEA6005FC0D9 /* XCRemoteSwiftPackageReference "AudioKitUI" */,
+				08BF1EDF2DD5EFB7005FC0D9 /* XCRemoteSwiftPackageReference "SoundpipeAudioKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 08DE93CF2DC1069D00089B3F /* Products */;
@@ -276,16 +280,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"SingUP/Preview Content\"";
-<<<<<<< HEAD
-				DEVELOPMENT_TEAM = 5WL5AS853S;
-=======
-				DEVELOPMENT_TEAM = 6DQ5YJWXT3;
->>>>>>> 03d234a53710cb5c700e3b7a4480c3d47ea87b7c
+				DEVELOPMENT_TEAM = FY2ZUW5Q3B;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = SingUP/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SingUP;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Kami memerlukan akses mikrofon untuk mendeteksi frekuensi suara.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -316,16 +316,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"SingUP/Preview Content\"";
-<<<<<<< HEAD
-				DEVELOPMENT_TEAM = 5WL5AS853S;
-=======
-				DEVELOPMENT_TEAM = 6DQ5YJWXT3;
->>>>>>> 03d234a53710cb5c700e3b7a4480c3d47ea87b7c
+				DEVELOPMENT_TEAM = FY2ZUW5Q3B;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = SingUP/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SingUP;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Kami memerlukan akses mikrofon untuk mendeteksi frekuensi suara.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -382,9 +378,17 @@
 				minimumVersion = 4.5.1;
 			};
 		};
-		7EE0265E2DD5A5BE00C12496 /* XCRemoteSwiftPackageReference "SoundpipeAudioKit" */ = {
+		08BF1ED62DD5EEA6005FC0D9 /* XCRemoteSwiftPackageReference "AudioKitUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/AudioKit/SoundpipeAudioKit.git";
+			repositoryURL = "https://github.com/AudioKit/AudioKitUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.7;
+			};
+		};
+		08BF1EDF2DD5EFB7005FC0D9 /* XCRemoteSwiftPackageReference "SoundpipeAudioKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AudioKit/SoundpipeAudioKit";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 5.7.0;
@@ -398,9 +402,14 @@
 			package = 088DE2B12DCDE9E3001DB807 /* XCRemoteSwiftPackageReference "lottie-spm" */;
 			productName = Lottie;
 		};
-		7EE0265F2DD5A5BE00C12496 /* SoundpipeAudioKit */ = {
+		08BF1ED72DD5EEA6005FC0D9 /* AudioKitUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 7EE0265E2DD5A5BE00C12496 /* XCRemoteSwiftPackageReference "SoundpipeAudioKit" */;
+			package = 08BF1ED62DD5EEA6005FC0D9 /* XCRemoteSwiftPackageReference "AudioKitUI" */;
+			productName = AudioKitUI;
+		};
+		08BF1EE02DD5EFB7005FC0D9 /* SoundpipeAudioKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 08BF1EDF2DD5EFB7005FC0D9 /* XCRemoteSwiftPackageReference "SoundpipeAudioKit" */;
 			productName = SoundpipeAudioKit;
 		};
 /* End XCSwiftPackageProductDependency section */

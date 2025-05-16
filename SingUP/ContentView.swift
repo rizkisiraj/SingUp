@@ -15,16 +15,25 @@ import AVFoundation
 
 // MARK: PEMBATAS-------------------------
 
+var warmup:WarmUp = listOfWarmUp[0]
+
 struct ContentView: View {
     @State private var path = NavigationPath()
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     
     var body: some View {
-        NavigationStack(path : $path) {
-            //Mic()
-            //  WarmUpSessionScreen()
-            HomePage(path : $path)
-                .modelContainer(for : [UserProfile.self, VocalTraining.self])
-            .navigationDestination(for : String.self){ route in
+        NavigationStack(path: $path) {
+            Group {
+                if hasCompletedOnboarding {
+                    HomePage(path: $path)
+                        .modelContainer(for: [UserProfile.self])
+                } else {
+                    GenderSelection(path: $path)
+                        .modelContainer(for: [UserProfile.self])
+                }
+            }
+            .navigationDestination(for: String.self) { route in
+                // All your routing cases here
                 if route == "warmup" {
                     WarmUpPage(path : $path)
                 } else if route == "exercise" {
@@ -50,25 +59,28 @@ struct ContentView: View {
                 } else if route == "warmupdone" {
                     BreathingView(path: $path)
                 } else if route == "humming"{
-                    WarmUpSessionScreen()
+                    WarmUpSessionScreen(path: $path)
                         .modelContainer(for : [UserProfile.self])
                 } else if route == "liptrills"{
-                    WarmUpSessionScreen()
+                    WarmUpSessionScreen(path: $path)
                         .modelContainer(for : [UserProfile.self])
                 } else if route == "tonguetrill"{
-                    WarmUpSessionScreen()
-                        .modelContainer(for : [UserProfile.self, VocalTraining.self])
+                    WarmUpSessionScreen(path: $path)
+                        .modelContainer(for : [UserProfile.self])
                 } else if route == "scale"{
                     ScaleTraining(path: $path)
-                        .modelContainer(for : [UserProfile.self, VocalTraining.self])
+                        .modelContainer(for : [UserProfile.self])
+                } else if route == "home" {
+                    HomePage(path : $path)
+                        .modelContainer(for : [UserProfile.self])
                 } else{
                     //Mic()
                     HomePage(path : $path)
-                        .modelContainer(for : [UserProfile.self, VocalTraining.self])
+                        .modelContainer(for : [UserProfile.self])
                 }
             }
+            .navigationBarBackButtonHidden(true) // Hide the back button in SubView
         }
-        .navigationBarBackButtonHidden(true) // Hide the back button in SubView
     }
 }
 
