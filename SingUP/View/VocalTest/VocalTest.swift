@@ -86,75 +86,61 @@ struct VocalTest: View {
         }
         )
         
-        
         Button(action : {}){
             Image(systemName: "arrowtriangle.\(type==0 ? "down" : "up").circle.fill")
-                .foregroundStyle(type == 0 ? .blue : Color("Highest"))
+                .foregroundStyle(Color.white)
             
             Text("Sing \(type==0 ? "Lower" : "Higher")")
-                .foregroundStyle(type == 0 ? .blue : Color("Highest"))
+                .foregroundStyle(Color.white)
         }
-        .padding(.horizontal, 20)
+        .frame(maxWidth: .infinity)
         .padding(.vertical, 5)
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(.clear)
-                .opacity(0.1)
-        )
-        .padding(.vertical, 0)
+        .background(type == 0 ? .blue : Color("Highest"))
         
-        Text("\(peakFreq < 99999 ? peakFreq : 0) Hz")
-            .font(.title)
-            .foregroundColor(type == 0 ?.blue : Color("Highest"))
-            .padding(20)
-        Image(systemName: "arrowtriangle.down.fill")
-            .foregroundStyle(.purple)
-            .font(.title.bold())
-            .frame(maxWidth : .infinity, alignment : .center)
-        
-        Divider()
-            .padding(.horizontal, 20)
-        
-        HStack(spacing : 0){
-            Text("\(chord[ (chord.count + getChord()[0]-2) % chord.count ])\(getChord()[1])")
-                .font(.subheadline)
-                        .opacity(0.5)
-                        .padding(18)
-            
-            Text("\(chord[ (chord.count + getChord()[0]-1) % chord.count ])\(getChord()[1])")
-                .font(.subheadline)
-                        .opacity(0.5)
-                        .padding(18)
-            
-            
-            Text("\(chord[getChord()[0]])\(getChord()[1])")
-                .font(.system(size: 70, weight: .bold, design: .default))
-                .foregroundColor(.primary)
-                .padding(10)
-            
-            
-            Text("\(chord[ (getChord()[0]+1) % chord.count ])\(getChord()[1])")
-                .font(.subheadline)
-                        .opacity(0.5)
-                        .padding(18)
-            
-            Text("\(chord[ (getChord()[0]+2) % chord.count ])\(getChord()[1])")
-                .font(.subheadline)
-                        .opacity(0.5)
-                        .padding(18)
-            
+        ZStack(alignment: .bottom) {
+            LinearGradient(
+                gradient: Gradient(colors: [Color.white, Color.green.opacity(0.7)]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 96) // Limit the gradient height
+                .ignoresSafeArea() // Ensure it spans the screen width
+
+            ZStack(alignment: .bottom) {
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.white, Color.green.opacity(0.7)]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 96)
+                .ignoresSafeArea()
+
+                VStack(spacing: 28) {
+                    Text("\(chord[getChord()[0]])\(getChord()[1])")
+                        .font(.system(size: 80, weight: .bold))
+                        .foregroundColor(.primary)
+                    Text("\(peakFreq < 99999 ? peakFreq : 0) Hz")
+                        .font(.title)
+                        .foregroundColor(type == 0 ? .blue : .black)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 70)
+                .zIndex(1) // <- bring to front
+
+                BarChartBackground(type: type)
+                    .zIndex(0) // <- send to back
+                    .allowsHitTesting(false) // <- don't block interaction
+            }
+            .frame(height: 300)
+
+            //BarChartBackground(type: type) // Positioned at the bottom
         }
-        .onAppear{
+        .frame(height: 300)
+        .onAppear {
             key = getChordByFrequency(freq: Int(detector.frequency))[0]
             octave = getChordByFrequency(freq: Int(detector.frequency))[1]
             peakFreq = type == 0 ? 99999 : 0
-            
         }
-        
-        Divider()
-            .padding(.horizontal, 20)
-            .padding(.bottom , 10)
-        
         
         Button(
             action : {
@@ -236,4 +222,50 @@ struct VocalTest: View {
     @Previewable @State var path = NavigationPath()
     //ContentView()
     VocalTest(path : $path)
+}
+
+struct BarChartBackground: View {
+    @State private var barHeights: [CGFloat] = Array(repeating: 0, count: 60)
+    var type: Int
+
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            // Only show this background gradient for type == 1
+            if type == 1 {
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.green, Color.orange, Color.white, Color.white]),
+                    startPoint: .bottom,
+                    endPoint: .top
+                )
+            }
+
+            GeometryReader { geometry in
+                HStack(alignment: .bottom, spacing: 2) {
+                    ForEach(0..<barHeights.count, id: \.self) { index in
+                        RoundedRectangle(cornerRadius: 1)
+                            .fill(Color.black.opacity(0.2))
+                            .frame(
+                                width: geometry.size.width / CGFloat(barHeights.count) - 2,
+                                height: type == 1
+                                    ? barHeights[index]
+                                    : min(max(barHeights[index], 4), 24)
+                            )
+                    }
+                }
+                .frame(maxHeight: .infinity, alignment: .bottom)
+            }
+        }
+        .frame(maxHeight: type == 1 ? .infinity : 24, alignment: .bottom) // type 0 has fixed height
+        .onAppear {
+            Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { _ in
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    barHeights = barHeights.map { _ in
+                        type == 1
+                        ? CGFloat.random(in: 4...164)
+                        : CGFloat.random(in: 4...24)
+                    }
+                }
+            }
+        }
+    }
 }
