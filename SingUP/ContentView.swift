@@ -82,6 +82,8 @@ struct ContentView: View {
             }
             .navigationBarBackButtonHidden(true) // Hide the back button in SubView
         }
+        .preferredColorScheme(.light)
+
     }
 }
 #Preview {
