@@ -13,6 +13,7 @@ import AudioKit
 import AudioKitEX
 import AudioToolbox
 import SoundpipeAudioKit
+import SwiftData
 
 let kAudioUnitSubType_DLSSynth: OSType = 0x646c7320 // 'dls '
 
@@ -24,6 +25,7 @@ struct NoteEvent {
 
 struct ScaleTraining: View {
     
+    @Query var histories: [History]
     @Binding var path : NavigationPath
     @State private var highlights: [HighlightCell] = []
     @State private var shouldNavigate = false
@@ -49,14 +51,14 @@ struct ScaleTraining: View {
     // MARK: AAA
     @State private var scrollOffset: CGFloat = 0
     @State private var isAnimating = false // Track animation state
-    @State private var currentYIndex: Int = 19 // Index for "C3" as starting point
+    @State private var currentYIndex: Int = 8 // Index for "C3" as starting point
     @StateObject private var pitchManager = PitchManager()
     @State private var isPitchMovementActive = false
-    @State private var interpolatedY: CGFloat = 0 // nilai antar yIndex
-
+    @State private var interpolatedY: CGFloat = 11.0 // nilai antar yIndex
 
     
-    let yLabels = ["A5", "G5", "F5", "E5", "D5", "C5", "B4", "A4", "G4", "F4", "E4", "D4", "C4", "B3", "A3", "G3", "F3", "E3", "D3", "C3", "B2", "A2", "G2", "F2","E2", " "]
+    let yLabels = ["C5", "B4", "A4", "G4", "F4", "E4", "D4", "C4", "B3", "A3", "G3", "F3", "E3", "D3", "C3", "B2", "A2", ""]
+
 
     var totalColumns: Int {
         Int(ceil(scrollDuration / visualTimePerColumn))
@@ -83,24 +85,20 @@ struct ScaleTraining: View {
                     Color.white
                         .frame(height: geometry.size.height * 0.15)
                         .ignoresSafeArea(edges: .top)
+                    Text("Session 1 of 1")
+                    ProgressView(value: elapsedTime, total: totalDuration)
+                        .progressViewStyle(LinearProgressViewStyle())
+                        .scaleEffect(x: 1, y: 2, anchor: .center)
+                        .animation(.linear(duration: 0.05), value: elapsedTime)
+                        .padding()
+                    Color.white
+                        .frame(height: geometry.size.height * 0.05)
                     // Grid View and etc
                     HStack(spacing: 0) {
                         ZStack(alignment: .top) {
                             // MARK: DEBUG RED
                             Color.white
                             
-                            GeometryReader { geo in
-                                let cellHeight = geo.size.height / CGFloat(yLabels.count)
-                                
-                                // Horizontal lines
-                                ForEach(0..<yLabels.count, id: \.self) { i in
-                                    Rectangle()
-                                        .fill(Color.black.opacity(0.1))
-                                        .frame(height: 1)
-                                        .position(x: geo.size.width / 2,
-                                                  y: cellHeight * CGFloat(i))
-                                }
-                            }
                         }
                         .frame(width: geometry.size.width * 0.1, height: geometry.size.height * 0.7)
                         .zIndex(0) // Keep the red section behind
@@ -115,15 +113,15 @@ struct ScaleTraining: View {
                                 // Center vertical line (full height)
                                 Rectangle()
                                     .fill(Color.black)
-                                    .frame(width: 2, height: geo.size.height)
-                                    .position(x: geo.size.width / 2, y: geo.size.height / 2)
+                                    .frame(width: 5, height: geo.size.height )
+                                    .position(x: geo.size.width / 2 + 100, y: geo.size.height / 2)
                                 
                                 // Horizontal lines
                                 ForEach(0..<yLabels.count, id: \.self) { i in
                                     Rectangle()
                                         .fill(Color.black.opacity(0.1))
                                         .frame(height: 1)
-                                        .position(x: geo.size.width / 2,
+                                        .position(x: geo.size.width / 2 + 100,
                                                   y: cellHeight * CGFloat(i))
                                 }
                                 
@@ -139,10 +137,10 @@ struct ScaleTraining: View {
                                                         endPoint: .trailing
                                                     )
                                                 )
-                                                .frame(width: 22, height: 22)
+                                                .frame(width: 32, height: 32)
                                                 .overlay(
                                                     Circle()
-                                                        .stroke(Color.black.opacity(0.6), lineWidth: 1)
+                                                        .stroke(Color.black.opacity(0.6), lineWidth: 5)
                                                 )
                                             
                                             Image(systemName: "music.note")
@@ -152,7 +150,7 @@ struct ScaleTraining: View {
                                                 .foregroundColor(.black)
                                         }
                                         .position(
-                                            x: geo.size.width / 2,
+                                            x: geo.size.width / 2 + 100,
                                             y: rowHeight * (interpolatedY + 0.5)
                                         )
                                         .animation(.easeOut(duration: 0.07), value: interpolatedY)
@@ -160,35 +158,36 @@ struct ScaleTraining: View {
                                 }
                             }
                         }
-                        .frame(width: geometry.size.width * 0.0, height: geometry.size.height * 0.7)
+                        .frame(width: geometry.size.width * 0.0, height: geometry.size.height * 0.6)
                         .background(Color.green.opacity(0.4))
                         .zIndex(2) // Green section goes on top
                         
                         ScrollView(.horizontal, showsIndicators: true) {
                             HStack(spacing: 0) {
-                                CoordinateGridViewScale(highlightPositions: highlights)
+                                CoordinateGridViewScale(highlightPositions: highlights, scrollOffset: scrollOffset)
                                     .frame(width: CGFloat(totalColumns) * columnWidth,
-                                           height: geometry.size.height * 0.7)
+                                           height: geometry.size.height * 0.6)
                             }
                             .offset(x: -scrollOffset)
                         }
                         .clipped()
                         .zIndex(0) // Grid view stays below the green section
                     }
-                    .frame(height: geometry.size.height * 0.7)
+                    .frame(height: geometry.size.height * 0.6)
                     
                     ZStack {
                         Color.white
                         
                         VStack(spacing: 12) {
-                            Button("Stop", action: {
-                                stopAnimation()
-                                isPitchMovementActive = false
-                                timer?.invalidate()
-                                showCountdownBar = false
-                                introPlayer?.stop()
-                                introPlayer = nil
-                            })
+                            Button(action: {
+                                    // Action to perform when the button is tapped
+                                  }) {
+                                    Label("Pause", systemImage: "play.fill")
+                                      .padding()
+                                      .foregroundColor(.white)
+                                      .background(Color.blue)
+                                      .cornerRadius(10)
+                                  }
 
                             // Fixed height container to avoid jump
                             ZStack {
@@ -216,8 +215,16 @@ struct ScaleTraining: View {
                                 let noteName = ScaleTraining.noteNumberToName(roundedMIDINote)
 
                                 if let index = yLabels.firstIndex(of: noteName) {
-                                    interpolatedY = CGFloat(index)
+                                    if interpolatedY != CGFloat(index) {
+                                        interpolatedY = CGFloat(index)
+//                                        print("🎯 pitch: \(pitch), midi: \(midi), noteName: \(ScaleTraining.noteNumberToName(UInt8(round(midi))))")
+                                    }
+                                    
+//                                    print("index: \(index)")
+//                                    print("interpolatedY: \(interpolatedY)")
                                 }
+
+                        
                     }
 
                 }
@@ -239,8 +246,6 @@ struct ScaleTraining: View {
                             let newTotalColumns = Int(ceil(midiLength / preferredColumnDuration))
                             print("🎯 Scroll duration: \(scrollDuration)s, totalColumns: \(newTotalColumns)")
                         }
-
-                        
 
                     do {
 //                        try sampler.loadSoundFont("mysf", preset: 2, bank: 0) // make sure "mysf.sf2" is in the bundle
@@ -265,6 +270,10 @@ struct ScaleTraining: View {
 
 
             }
+            .onDisappear {
+                introPlayer?.stop()
+                introPlayer = nil
+            }
             .overlay {
                 if isNarrating {
                     WelcomeChatOverlay {
@@ -283,11 +292,19 @@ struct ScaleTraining: View {
 
                                 let delay: Double = 0.3 // ⏱ Try tweaking between 0.05–0.15
                                 
-                                withAnimation(.linear(duration: scrollDuration)) {
-                                    scrollOffset = CGFloat(totalColumns - 1) * columnWidth
+                                let startTime = Date()
+
+                                Timer.scheduledTimer(withTimeInterval: 1.0 / 60.0, repeats: true) { timer in
+                                    let elapsed = Date().timeIntervalSince(startTime)
+                                    let progress = min(elapsed / scrollDuration, 1.0)
+                                    scrollOffset = CGFloat(progress) * CGFloat(totalColumns - 1) * columnWidth
+
+                                    if progress >= 1.0 {
+                                        timer.invalidate()
+                                    }
                                 }
                                 
-                                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                     playSoundAudio()
                                     startTimer()
                                 }
@@ -497,12 +514,16 @@ struct ScaleTraining: View {
 // MARK: - COORDINATE GRID WITH yLabel, xLabel and vertical line
 struct CoordinateGridViewScale: View {
 
-    let xLabels = Array(1...30).map { "\($0)" }
-    let yLabels = ["" ,"E2", "F2", "G2", "A2", "B2", "C3", "D3", "E3", "F3", "G3", "A3", "B3",
-                   "C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5", "D5", "E5", "F5", "G5", "A5"]
+    let xLabels = Array(1...18).map { "\($0)" }
+    let yLabels = ["","A2", "B2", "C3", "D3", "E3", "F3", "G3",
+                   "A3", "B3", "C4", "D4", "E4", "F4", "G4",
+                   "A4", "B4", "C5"]
+    
 
     let columnWidth: CGFloat = 50
     var highlightPositions: [HighlightCell]
+    var scrollOffset: CGFloat
+    
 
 
     // Custom struct to conform to Hashable
@@ -535,16 +556,16 @@ struct CoordinateGridViewScale: View {
                 highlightCells(in: geo)
 
                 // X-axis labels with scroll target IDs
-                ForEach(0..<xLabels.count, id: \.self) { i in
-                    Text(xLabels[i])
-                        .font(.caption2)
-                        .foregroundColor(.white)
-                        .position(
-                            x: CGFloat(i) * columnWidth + columnWidth / 2,
-                            y: geo.size.height - 10
-                        )
-                        .id("cell_\(i + 1)") // ID for scrolling
-                }
+//                ForEach(0..<xLabels.count, id: \.self) { i in
+//                    Text(xLabels[i])
+//                        .font(.caption2)
+//                        .foregroundColor(.black)
+//                        .position(
+//                            x: CGFloat(i) * columnWidth + columnWidth / 2,
+//                            y: geo.size.height - 10
+//                        )
+//                        .id("cell_\(i + 1)") // ID for scrolling
+//                }
 
                 // Y-axis labels
                 ForEach(0..<yLabels.count, id: \.self) { j in
@@ -563,6 +584,8 @@ struct CoordinateGridViewScale: View {
     // MARK: FUNC WITH TEXT GRID
     func highlightCells(in geo: GeometryProxy) -> some View {
         let rowHeight = geo.size.height / CGFloat(yLabels.count)
+        let lineX = geo.size.width / 2 + 100 // must match actual line position
+
         
         
         return Group {
@@ -570,22 +593,31 @@ struct CoordinateGridViewScale: View {
                 if let yIndex = yLabels.firstIndex(of: position.y) {
                     let xPos = CGFloat(position.x - 1) * columnWidth + (CGFloat(position.width) * columnWidth) / 2
                     let yPos = geo.size.height - CGFloat(yIndex) * rowHeight - rowHeight / 2
+                    let lineX = geo.size.width / 2 + 100 // must match actual line position
+                    let cellX = CGFloat(position.x - 1) * columnWidth
+                    let cellXOnScreen = cellX - scrollOffset // +100 to align grid position with the vertical line
+                    
+                    let hasPassedLine = cellXOnScreen < 7.0
+
+                    let fillColor: LinearGradient = !hasPassedLine
+                        ? LinearGradient(gradient: Gradient(colors: [Color.gray, Color.gray]), startPoint: .leading, endPoint: .trailing)
+                        : LinearGradient(gradient: Gradient(colors: [Color("pink"), Color("ungu")]), startPoint: .leading, endPoint: .trailing)
+                    
                     
                     ZStack {
                         Rectangle()
-                            .fill(LinearGradient(
-                                gradient: Gradient(colors: [Color("pink"), Color("ungu")]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ))
+                            .fill(fillColor)
                             .frame(width: columnWidth * CGFloat(position.width), height: rowHeight)
                             .cornerRadius(20)
 
-                        Text(position.label)
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.black)
+                        
+                        VStack {
+                            Text(position.label)
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundColor(.black)
+                        }
                     }
-                    .position(x: xPos, y: yPos)
+                    .position(x: xPos + 100, y: yPos)
                 }
             }
         }
@@ -672,16 +704,6 @@ struct CountdownProgressBar: View {
                 }
                 .frame(maxHeight: .infinity)
             
-            ProgressView(value: progress)
-                .progressViewStyle(LinearProgressViewStyle())
-                .frame(height: 10)
-                .animation(.linear(duration: 0.05), value: progress)
-                .padding(.trailing, 8)
-
-            Text("\(timeRemaining)s")
-                .font(.system(size: 18, weight: .bold, design: .monospaced))
-                .foregroundColor(.black)
-                .frame(width: 40, alignment: .trailing)
         }
         .padding()
     }
