@@ -52,11 +52,18 @@ struct LineChartView: View {
             VStack{
                 Spacer()
                 VStack{
-                    Image(systemName: "document.badge.clock")
-                        .font(.largeTitle)
+                    Image(systemName: "document.fill")
+                        .font(.system(size: 80))
+                       
+                    Text("No history yet.")
+                        .font(.title.bold())
+                        .padding(.top, 10)
                     
-                    Text("No history data available")
-                        .padding(.vertical, 10)
+                    Text("Start your vocal session to begin your journey.")
+                        .padding(.horizontal, 20)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth : .infinity , alignment : .center)
+                        .font(.headline)
                 }
                 Spacer()
             }
@@ -264,6 +271,6 @@ struct HistoryPage: View {
 
 
 #Preview {
-    ContentView()
-    //HistoryPage(history : .constant(nil))
+    //ContentView()
+    HistoryPage(history : .constant(nil))
 }
