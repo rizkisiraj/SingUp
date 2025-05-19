@@ -6,7 +6,7 @@
 //
 import SwiftUI
 import Foundation
-
+import Lottie
 
 struct WarmUpGuideScreen: View {
     var warmUp: WarmUp
@@ -19,13 +19,15 @@ struct WarmUpGuideScreen: View {
                 .font(.title)
                 .fontWeight(.bold)
             Spacer()
-            Image(warmUp.image)
+            LottieView(animation: .named(warmUp.title))
+                .looping()
             Spacer()
             Text(warmUp.description)
                 .multilineTextAlignment(.center)
                 
             Spacer()
             Button {
+                warmup = warmUp
                 path.append(warmUp.path)
             } label: {
                 Text("Start")

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Lottie
 
 struct VocalTestInstruction : View{
     @Binding var path : NavigationPath
@@ -17,11 +18,14 @@ struct VocalTestInstruction : View{
                 .font(.title.bold())
                 .bold(true)
             
-            Image("VocalRangeTestIcon")
-                .resizable()
-                .frame(width: 300, height: 300)
-                .padding()
-                .offset(x : 20)
+//            Image("VocalRangeTestIcon")
+//                .resizable()
+//                .frame(width: 300, height: 300)
+//                .padding()
+//                .offset(x : 20)
+            
+            LottieView(animation: .named("Vocal Test"))
+                .looping()
             
             Text("Discover your vocal range by singing 'Ahh' as the notes go higher and lower stop when you reach the highest or lowest note you can sing comfortably.   ")
                 .multilineTextAlignment(.center)

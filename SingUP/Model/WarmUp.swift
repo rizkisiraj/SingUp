@@ -7,7 +7,7 @@
 import SwiftUI
 
 
-struct WarmUp: Identifiable {
+struct WarmUp: Identifiable, Hashable {
     let id = UUID()
     var title: String
     var image: ImageResource
@@ -17,8 +17,5 @@ struct WarmUp: Identifiable {
 }
 
 let listOfWarmUp: [WarmUp] = [
-    WarmUp(title: "Breathing", image: .breathWarmUpIcon, description: "Breath by inhaling deeply, holding it briefly, and exhaling slowly to help your voice become stronger and more stable when singing.", shortDesc: "Control your breathing", path:  "breathing"),
-    WarmUp(title: "Humming", image: .hummningWarmUpIcon, description: "Warm up your voice by gently humming a comfortable note feel the vibrations in your face and stay relaxed as you ease into your singing.", shortDesc: "Warm up your voice softly", path : "humming"),
-    WarmUp(title: "Lip Trills", image: .lipThrillsWarmUpIcon, description: "Warm up your voice with lip trills by blowing air through relaxed lips while gliding through different pitches—great for breath control and vocal flexibility.", shortDesc: "Loosen your tongue muscles", path : "liptrills"),
-    WarmUp(title: "Tongue Trills", image: .tongueThrillsWarmUpIcon, description: "Loosen up your articulation and breath support by doing tongue trills roll your ‘R’ sound while gliding through different pitches.", shortDesc: "Relax your lips and airflow", path : "tonguetrills"),
+    WarmUp(title: "Breathing", image: .breathWarmUpIcon, description: "Breath by inhaling deeply, holding it briefly, and exhaling slowly to help your voice become stronger and more stable when singing.", shortDesc: "Control your breathing", path:  "breathing")
 ]

@@ -4,7 +4,7 @@
 //
 //  Created by Surya on 08/05/25.
 //
-
+import Lottie
 import SwiftUI
 
 struct ExerciseGuideScreen: View {
@@ -18,7 +18,9 @@ struct ExerciseGuideScreen: View {
                 .font(.title)
                 .fontWeight(.bold)
             Spacer()
-            Image(exercise.image)
+//            Image(exercise.image)
+            LottieView(animation: .named(exercise.imageLottie))
+                .looping()
             Spacer()
             Text(exercise.description)
                 .multilineTextAlignment(.center)

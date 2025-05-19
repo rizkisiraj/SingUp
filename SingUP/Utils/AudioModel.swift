@@ -122,10 +122,17 @@ class FrequencyDetector: ObservableObject {
     }
 
 
-    deinit {
+    func stop() {
+        print("🧹 FrequencyDetector deinit called")
         inputNode.removeTap(onBus: 0)
         vDSP_destroy_fftsetup(fftSetup)
         audioEngine.stop()
+        
+        do {
+            try AVAudioSession.sharedInstance().setActive(false)
+        } catch {
+            print("❌ Failed to deactivate AVAudioSession: \(error)")
+        }
     }
 }
 

@@ -13,15 +13,15 @@ struct HomePage:View{
     @State var page : Int = 0
     @Query var userProfile : [UserProfile]
     @State var freq : [Int] = [0, 9999]
-    var vocalRange = VocalRange()
+    var vocalR = VocalRange()
     @Environment(\.modelContext) var context
-    
+    @State var history : History?
     var body: some View{
         VStack{
-            if page == 0 {
+           
+            TabView(selection: $page) {
                 ScrollView{
                     VStack(alignment : .leading, spacing : 0){
-                        
                         Text("Your Vocal Range is :")
                             .font(.title2)
                             .multilineTextAlignment(.center)
@@ -31,18 +31,27 @@ struct HomePage:View{
                             .padding(.top, 20)
                         
                         GroupBox{
-                            Text(vocalRange.getVocalType(lowFreq: freq[0], highFreq: freq[1]).uppercased())
+                            Text(vocalR.getVocalType(lowFreq: freq[0], highFreq: freq[1]).uppercased())
                                 .foregroundStyle(Color("YellowVocal"))
                                 .font(.largeTitle.bold())
                                 .frame(maxWidth : .infinity, alignment : .center)
                                 .padding(.bottom , 0)
                                 .padding(.top, 20)
+                           
                             
                             Text("\(getChordString(frequency : freq[0])) - \(getChordString(frequency : freq[1]))")
                                 .font(.title3)
                                 .bold(true)
                                 .frame(maxWidth : .infinity, alignment : .center)
+                            
+                            
+                            Text(vocalRange[vocalR.getVocalType(lowFreq: freq[0], highFreq: freq[1]).lowercased()] ?? "bass")
+                                .multilineTextAlignment(.center)
+                                .frame(maxWidth : .infinity)
+                                .font(.caption)
+                                .padding(.horizontal, 20)
                                 .padding(.bottom, 10)
+
                         }
                         .background(
                             RoundedRectangle(cornerRadius : 10)
@@ -52,7 +61,7 @@ struct HomePage:View{
                         .backgroundStyle(Color.clear)
                         .frame(maxWidth : .infinity, alignment : .center)
                         .padding(.horizontal, 50)
-                        .padding(.vertical, 20)
+                        .padding(.vertical, 10)
                         
                         
                         ScrollView(.horizontal, showsIndicators : false){
@@ -66,22 +75,23 @@ struct HomePage:View{
                                         VStack{
                                            
                                             Text(menu.title)
+                                                .fixedSize(horizontal : false, vertical : true)
                                                 .multilineTextAlignment(.center)
                                                 .font(.title.bold())
-                                                .frame(maxWidth : .infinity, alignment : .center)
-                                                .padding(.vertical, 20)
+                                                .padding(.vertical, 10)
                                                 .padding(.horizontal, 10)
+                                                .frame(maxWidth : .infinity, maxHeight : .infinity, alignment : .center)
                                             
                                             Image(menu.image)
                                                 .resizable()
-                                                .frame(width : 180, height : 180)
+                                                .frame(width : 160, height : 160)
                                             
                                             Text(menu.description)
                                                 .multilineTextAlignment(.center)
                                                 .font(.caption)
                                                 .padding(.horizontal, 20)
                                                 .frame(maxWidth : .infinity, maxHeight : .infinity)
-                                            
+                                                .fixedSize(horizontal : false, vertical : true)
                                             
                                             Button(
                                                 action : {
@@ -115,17 +125,19 @@ struct HomePage:View{
                                 .padding()
                                 
                             }
+                            .padding(.bottom, 30)
                             
                             
                             
                         }
-                        .padding(.top, 30)
+                        .padding(.top, 20)
                         
                        
                         
                     }
                 }
                 .onAppear(){
+                    history = History(context : context)
                     if let prof = userProfile.first{
                         freq = [Int(prof.lowestFrequency), Int(prof.highestFrequency)]
                     }else{
@@ -137,57 +149,26 @@ struct HomePage:View{
                         context.insert(newProf)
                     }
                 }
-            }else{
-                HistoryPage()
+                .tabItem {
+                    Image(systemName: "music.microphone")
+                    Text("Train")
+                }
+                .tag(0)
+                
+                
+                HistoryPage(history : $history)
+                    .tabItem {
+                        Image(systemName: "clock.fill")
+                        Text("History")
+                    }
+                .tag(1)
             }
-            
             
         }
         .toolbarRole(.navigationStack)
         //Toolbar untuk navigasi
         //Pake Native ToolBar
-        .toolbar{
-            ToolbarItem(placement: .bottomBar){
-                Spacer()
-            }
-            
-            ToolbarItem(placement: .bottomBar){
-                Button(action: {
-                    page = 0
-                }){
-                    VStack{
-                        Image(systemName: "house.fill")
-                            .foregroundStyle(page == 0 ? .blue  : .gray)
-                        Text("Home")
-                            .foregroundStyle(page == 0 ? .blue  : .gray)
-
-                    }
-                }
-            }
-            
-            ToolbarItem(placement: .bottomBar){
-                Spacer()
-            }
-            
-            ToolbarItem(placement: .bottomBar){
-                Button(action: {
-                    page = 1
-                }){
-                    VStack{
-                        Image(systemName: "clock.fill")
-                            .foregroundStyle(page == 1 ? .blue  : .gray)
-
-                        Text("History")
-                            .foregroundStyle(page == 1 ? .blue  : .gray)
-
-                    }
-                }
-            }
-            
-            ToolbarItem(placement: .bottomBar){
-                Spacer()
-            }
-        }
+        
         .frame(maxWidth : .infinity, maxHeight : .infinity)
         
     }
