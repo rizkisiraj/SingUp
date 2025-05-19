@@ -17,7 +17,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		08BF1ED52DD5EDFC005FC0D9 /* Exceptions for "SingUP" folder in "SingUP" target */ = {
+		08D2F26D2DDAEBBF00E166B1 /* Exceptions for "SingUP" folder in "SingUP" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -30,7 +30,7 @@
 		08DE93D02DC1069D00089B3F /* SingUP */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				08BF1ED52DD5EDFC005FC0D9 /* Exceptions for "SingUP" folder in "SingUP" target */,
+				08D2F26D2DDAEBBF00E166B1 /* Exceptions for "SingUP" folder in "SingUP" target */,
 			);
 			path = SingUP;
 			sourceTree = "<group>";
