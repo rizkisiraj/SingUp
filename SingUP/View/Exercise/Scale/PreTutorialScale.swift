@@ -55,7 +55,6 @@ struct WelcomeChatOverlay: View {
             DispatchQueue.main.asyncAfter(deadline: .now()) {
                 introPlayer?.play()
             }
-                        
         } catch {
             print("Failed to play intro audio: \(error)")
         }
