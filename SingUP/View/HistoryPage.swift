@@ -149,8 +149,8 @@ struct LineChartView: View {
                 }
 
 
-                .chartXAxisLabel("Tanggal Latihan", alignment: .center)
-                .chartYAxisLabel("Akurasi", alignment: .center)
+                .chartXAxisLabel("Date", alignment: .center)
+                .chartYAxisLabel("Accuracy", alignment: .center)
                 .chartYScale(domain: 0...100)
                 .chartXScale(domain: 1...(values.count > 1 ? values.count : 3))
 

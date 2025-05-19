@@ -25,7 +25,6 @@ struct NoteEvent {
 
 struct ScaleTraining: View {
     
-    @Query var histories: [History]
     @Binding var path : NavigationPath
     @State private var highlights: [HighlightCell] = []
     @State private var shouldNavigate = false
@@ -205,6 +204,7 @@ struct ScaleTraining: View {
             }
             .edgesIgnoringSafeArea(.all)
             .onAppear {
+                history = History(context : context)
                 pitchManager.onPitchDetected = { pitch in
                     let midi = 69 + 12 * log2(Double(pitch) / 440)
                     let minMIDINote = 40  // E2
