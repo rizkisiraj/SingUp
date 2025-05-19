@@ -28,8 +28,8 @@ struct LineChartView: View {
     @State var dataPoints: [ValuePoint] = []
     @State var selectedExercise: Exercise = .scale
     
-    func fetchData (adding : Int = 0) -> [VocalTraining]{
-        var data = history?.fetchAll(type : selectedExercise == .scale ? 0 : 1) ?? []
+    func fetchData (adding : Int = 0, reversed : Bool = true) -> [VocalTraining]{
+        var data = history?.fetchAll(type : selectedExercise == .scale ? 0 : 1, reversed : reversed) ?? []
         var arr = [Int]()
         for val in data{
             arr.append(Int(val.accuracy))
@@ -43,156 +43,26 @@ struct LineChartView: View {
     }
     
     var body: some View {
-        ScrollView{
-            Text("History")
-                .font(.largeTitle.bold())
-                .padding(.top, 20)
+      
             
             
-            // Create data points with index starting from 1
-           
             
-            Chart(Array((fetchData(adding : 1)).enumerated()), id: \.offset) { index, hist in
-                // Area background under the line
-                AreaMark(
-                    x: .value("Index", index+1),
-                    y: .value("Value", Int(hist.accuracy))
-                )
-                .interpolationMethod(.catmullRom)
-                .foregroundStyle(
-                    LinearGradient(
-                        gradient: Gradient(colors: [selectedExercise == .scale ? Color.blue.opacity(0.3) : Color.green.opacity(0.3), selectedExercise == .scale ? Color.blue.opacity(0.0) : Color.green.opacity(0.0)]),
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-                
-                // Line connecting the points
-                LineMark(
-                    x: .value("Index", index+1),
-                    y: .value("Value", Int(hist.accuracy))
-                )
-                .interpolationMethod(.catmullRom)
-                .foregroundStyle(selectedExercise == .scale ? Color.blue : Color.green)
-                .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round))
-                
-                // Dot at each point
-                PointMark(
-                    x: .value("Index", index+1),
-                    y: .value("Value", Int(hist.accuracy))
-                )
-                .foregroundStyle(selectedExercise == .scale ? Color.blue : Color.green)
-                .annotation(position: .top) {
-                    Text("\(Int(hist.accuracy))")
-                        .font(.caption2)
-                        .foregroundColor(selectedExercise == .scale ? Color.blue : Color.green)
-                }
-            }
-            // Custom X-axis labels
-            .chartXAxis {
-                AxisMarks(values: .stride(by: 1)) {
-                    AxisGridLine()
-                    AxisTick()
-                    AxisValueLabel()
-                }
-            }
-            // Custom Y-axis labels (10–100)
-            .chartYAxis {
-                AxisMarks(values: Array(stride(from: 10, through: 100, by: 10))) {
-                    AxisGridLine()
-                    AxisTick()
-                    AxisValueLabel()
-                }
-            }
-            .chartYScale(domain: 0...100)
-            .chartXScale(domain: 1...(values.count > 1 ? values.count : 3))
-            .frame(height: 250)
-            .padding()
-            
-            Picker("Exercise", selection: $selectedExercise ){
-              
-                Text("Scale")
-                    .tag(Exercise.scale)
-                Text("Sustain")
-                    .tag(Exercise.sustain)
-                
-                
-            }
-            .pickerStyle(SegmentedPickerStyle())
-            .padding()
-            
-            
-            Text("This is your history data for the \(selectedExercise == .scale ? "Scale" : "Sustain" ) exercise. These data was stored from your last vocal exercise session.")
-                .multilineTextAlignment(.leading)
-                .font(.caption)
-                .frame(maxWidth : .infinity, alignment : .leading)
-                .padding(.horizontal)
-            // Native List Below Chart
-            HStack {
-                Text("Recent Exercise")
-                    .font(.title2.bold())
-               Spacer()
-            }
-            .padding(.horizontal)
-            .padding(.top)
-            
-            Divider()
-                .padding(.horizontal)
+        // Create data points with index starting from 1
+        if self.values.count  == 0{
             VStack{
-                
-                if history?.fetchAll(type : selectedExercise == .scale ? 0 : 1).count ?? 0 == 0{
-                    Text("No history data available")
-                        .padding(.vertical, 50)
-                        .frame(maxHeight: .infinity)
-                }else {
-                    ForEach(Array(( fetchData()).enumerated()), id: \.offset) { index, hist in
-                        
-                        if index < limit  {
-                            HStack {
-                                Image(selectedExercise == .scale ? "ScaleExercise" : "SustainExercise")
-                                Spacer()
-                                
-                                VStack{
-                                    Text(selectedExercise == .scale ? "ScaleExercise" : "SustainExercise")
-                                        .font(.title2.bold())
-                                        .foregroundStyle(selectedExercise == .scale ? .blue : .green)
-                                        .frame(maxWidth : .infinity, alignment : .leading)
-                                    
-                                    Text("Exercise No : \(abs(self.values.count - index))")
-                                        .frame(maxWidth : .infinity, alignment : .leading)
-                                    
-                                }
-                                
-                                Spacer()
-                                VStack{
-                                    Text("\(Int(hist.accuracy))%")
-                                        .font(.title.bold())
-                                    Text("Accuracy")
-                                        .font(.caption)
-                                        
-                                }
-                            }
-                            .padding()
-                            .background(
-                                RoundedRectangle(cornerRadius : 10)
-                                    .fill(selectedExercise == .scale ? .blue.opacity(0.1) : .green.opacity(0.1))
-                            )
-                            .padding(.horizontal, 20)
-                        }
-                        
-                    }
+                Spacer()
+                VStack{
+                    Image(systemName: "document.badge.clock")
+                        .font(.largeTitle)
                     
-                    Button(action: {
-                        limit += 5
-                    }){
-                        Text("Load more data")
-                            .padding()
-                    }
+                    Text("No history data available")
+                        .padding(.vertical, 10)
                 }
-                
+                Spacer()
             }
             .onAppear {
                 //history?.deleteAll()
+                print("Total data\(history?.fetchAll(type : selectedExercise == .scale ? 0 : 1).count ?? 0)")
                 var arr = [Int]()
                 for val in history?.fetchAll(type : selectedExercise == .scale ? 0 : 1) ?? [] {
                     arr.append(Int(val.accuracy))
@@ -202,11 +72,186 @@ struct LineChartView: View {
                 
                 dataPoints = values.enumerated().map { ValuePoint(index: $0.offset + 1, value: $0.element) }
             }
+           
+            
+        }else {
+            
+            ScrollView{
+                
+                Text("History")
+                    .font(.largeTitle.bold())
+                    .padding(.top, 20)
+                let datas = fetchData(adding : 1)
+                
+                Chart(Array((fetchData(adding : 1, reversed : false)).enumerated()), id: \.offset) { index, hist in
+                    // Area background under the line
+                    AreaMark(
+                        x: .value("Index", index+1),
+                        y: .value("Value", Int(hist.accuracy))
+                    )
+                    .interpolationMethod(.catmullRom)
+                    .foregroundStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [selectedExercise == .scale ? Color.blue.opacity(0.3) : Color.green.opacity(0.3), selectedExercise == .scale ? Color.blue.opacity(0.0) : Color.green.opacity(0.0)]),
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    
+                    // Line connecting the points
+                    LineMark(
+                        x: .value("Index", index+1),
+                        y: .value("Value", Int(hist.accuracy))
+                    )
+                    .interpolationMethod(.catmullRom)
+                    .foregroundStyle(selectedExercise == .scale ? Color.blue : Color.green)
+                    .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round))
+                    
+                    // Dot at each point
+                    PointMark(
+                        x: .value("Index", index+1),
+                        y: .value("Value", Int(hist.accuracy))
+                    )
+                    .foregroundStyle(selectedExercise == .scale ? Color.blue : Color.green)
+                    .annotation(position: .top) {
+                        Text("\(Int(hist.accuracy))")
+                            .font(.caption2)
+                            .foregroundColor(selectedExercise == .scale ? Color.blue : Color.green)
+                    }
+                }
+                .chartYAxis {
+                    AxisMarks(values: Array(stride(from: 10, through: 100, by: 10))) {
+                        AxisGridLine()
+                        AxisTick()
+                        AxisValueLabel()
+                    }
+                }
+                .chartXAxis {
+                    AxisMarks(values: Array(stride(from: 1, through: datas.count, by: max(1, datas.count / 5)))) { value in
+                        AxisGridLine()
+                        AxisTick()
+                        AxisValueLabel() {
+                            if let index = value.as(Int.self), index >= 1, index <= datas.count {
+                                let reversedIndex = datas.count - index
+                                let date = datas[reversedIndex].date
+                                Text(date, format: .dateTime.day().month(.abbreviated))
+                                    .font(.caption2)
+                            }
+                        }
+                    }
+                }
+
+
+                .chartXAxisLabel("Tanggal Latihan", alignment: .center)
+                .chartYAxisLabel("Akurasi", alignment: .center)
+                .chartYScale(domain: 0...100)
+                .chartXScale(domain: 1...(values.count > 1 ? values.count : 3))
+
+                .frame(height: 250)
+                .padding()
+
+                
+                Picker("Exercise", selection: $selectedExercise ){
+                  
+                    Text("Scale")
+                        .tag(Exercise.scale)
+                    Text("Sustain")
+                        .tag(Exercise.sustain)
+                    
+                    
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .padding()
+                
+                
+                Text("This is your history data for the \(selectedExercise == .scale ? "Scale" : "Sustain" ) exercise. These data was stored from your last vocal exercise session.")
+                    .multilineTextAlignment(.leading)
+                    .font(.caption)
+                    .frame(maxWidth : .infinity, alignment : .leading)
+                    .padding(.horizontal)
+                // Native List Below Chart
+                HStack {
+                    Text("Recent Exercise")
+                        .font(.title2.bold())
+                   Spacer()
+                }
+                .padding(.horizontal)
+                .padding(.top)
+                
+                Divider()
+                    .padding(.horizontal)
+                VStack{
+                    
+                    
+                        ForEach(Array(( fetchData()).enumerated()), id: \.offset) { index, hist in
+                            
+                            if index < limit  {
+                                HStack {
+                                    Image(selectedExercise == .scale ? "ScaleExercise" : "SustainExercise")
+                                    Spacer()
+                                    
+                                    VStack{
+                                        Text(selectedExercise == .scale ? "ScaleExercise" : "SustainExercise")
+                                            .font(.title2.bold())
+                                            .foregroundStyle(selectedExercise == .scale ? .blue : .green)
+                                            .frame(maxWidth : .infinity, alignment : .leading)
+                                        
+                                        Text("\(hist.date.formatted(.dateTime.day().month().year().hour().minute()))")
+                                            .font(.caption)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+
+
+                                        
+                                    }
+                                    
+                                    Spacer()
+                                    VStack{
+                                        Text("\(Int(hist.accuracy))%")
+                                            .font(.title.bold())
+                                        Text("Accuracy")
+                                            .font(.caption)
+                                            
+                                    }
+                                }
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius : 10)
+                                        .fill(selectedExercise == .scale ? .blue.opacity(0.1) : .green.opacity(0.1))
+                                )
+                                .padding(.horizontal, 20)
+                            }
+                            
+                        }
+                        
+                        Button(action: {
+                            limit += 5
+                        }){
+                            Text("Load more data")
+                                .padding()
+                        }
+                    }
+                    
+                }
+                .onAppear {
+                    //history?.deleteAll()
+                    var arr = [Int]()
+                    for val in history?.fetchAll(type : selectedExercise == .scale ? 0 : 1) ?? [] {
+                        arr.append(Int(val.accuracy))
+                    }
+                    self.values = arr
+                    
+                    
+                    dataPoints = values.enumerated().map { ValuePoint(index: $0.offset + 1, value: $0.element) }
+                }
+                
+            
+            .padding(.horizontal, 10)
+            
             
         }
-        .padding(.horizontal, 10)
-       
     }
+       
+    
 }
 // Preview or usage in ContentView
 struct HistoryPage: View {

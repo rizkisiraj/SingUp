@@ -161,7 +161,7 @@ struct HomePage:View{
                         Image(systemName: "clock.fill")
                         Text("History")
                     }
-                    .tag(1)
+                .tag(1)
             }
             
         }

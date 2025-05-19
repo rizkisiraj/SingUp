@@ -65,9 +65,9 @@ class History{
 //        }
 //    }
     
-    func fetchAll(type: Int) -> [VocalTraining] {
+    func fetchAll(type: Int, reversed : Bool = true) -> [VocalTraining] {
         let predicate = #Predicate<VocalTraining> { $0.exercise == type }
-        let sort = [SortDescriptor(\VocalTraining.date, order: .reverse)] // Urut dari terbaru
+        let sort = [SortDescriptor(\VocalTraining.date, order:  reversed ? .reverse : .forward)] // Urut dari terbaru
           
        let query = FetchDescriptor(predicate: predicate, sortBy: sort)
 
