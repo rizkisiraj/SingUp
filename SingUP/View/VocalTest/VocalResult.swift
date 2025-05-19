@@ -56,23 +56,11 @@ struct VocalResult: View {
 //              .bold(true)
 //              .padding(.bottom, 20)
         
-        Text({
-            switch vocalType {
-            case "Bass":
-                return "Low Voice"
-            case "Baritone":
-                return "Medium Voice"
-            case "Tenor":
-                return "High Voice"
-            default:
-                return "\(getChordString(frequency: freq[0])) - \(getChordString(frequency: freq[1]))"
-            }
-        }())
-        .multilineTextAlignment(.center)
-        .font(.title2)
-        .bold(true)
-        .padding(.bottom, 20)
-        
+        Text("\(getChordString(frequency : freq[0])) - \(getChordString(frequency : freq[1]))")
+            .font(.title3)
+            .bold(true)
+            .frame(maxWidth : .infinity, alignment : .center)
+            .padding(.bottom, 10)
         
         
         Text(vocalRange[vocalR.getVocalType(lowFreq: freq[0], highFreq: freq[1]).lowercased()] ?? "bass")

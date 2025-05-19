@@ -27,7 +27,7 @@ struct ContentView: View {
             Group {
                 if hasCompletedOnboarding {
                     HomePage(path: $path)
-                        .modelContainer(for: [UserProfile.self])
+                        .modelContainer(for: [UserProfile.self, VocalTraining.self])
                 } else {
                     GenderSelection(path: $path)
                         .modelContainer(for: [UserProfile.self])
@@ -70,14 +70,14 @@ struct ContentView: View {
                         .modelContainer(for : [UserProfile.self])
                 } else if route == "scale"{
                     ScaleTraining(path: $path)
-                        .modelContainer(for : [UserProfile.self])
+                        .modelContainer(for : [UserProfile.self, VocalTraining.self])
                 } else if route == "home" {
                     HomePage(path : $path)
                         .modelContainer(for : [UserProfile.self])
                 } else{
                     //Mic()
                     HomePage(path : $path)
-                        .modelContainer(for : [UserProfile.self])
+                        .modelContainer(for : [UserProfile.self, VocalTraining.self])
                 }
             }
             .navigationBarBackButtonHidden(true) // Hide the back button in SubView
