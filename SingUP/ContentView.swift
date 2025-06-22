@@ -54,6 +54,8 @@ struct ContentView: View {
                     GenderSelection(path: $path)
                 case "vtinstruction":
                     VocalTestInstruction(path: $path)
+                case "sustain":
+                    SustainTraining(path: $path)
                 case "vtest1":
                     VocalTest(path: $path)
                 case "vtest2":

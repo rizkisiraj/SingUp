@@ -152,7 +152,7 @@ struct LineChartView: View {
                 .chartXAxisLabel("Tanggal Latihan", alignment: .center)
                 .chartYAxisLabel("Akurasi", alignment: .center)
                 .chartYScale(domain: 0...100)
-                .chartXScale(domain: 1...(values.count > 1 ? values.count : 3))
+                .chartXScale(domain: 1...(datas.count > 1 ? datas.count : 3))
 
                 .frame(height: 250)
                 .padding()
@@ -199,7 +199,7 @@ struct LineChartView: View {
                                     
                                     VStack{
                                         Text(selectedExercise == .scale ? "ScaleExercise" : "SustainExercise")
-                                            .font(.title2.bold())
+                                            .font(selectedExercise == .scale ? .title2.bold() :.title3.bold())
                                             .foregroundStyle(selectedExercise == .scale ? .blue : .green)
                                             .frame(maxWidth : .infinity, alignment : .leading)
                                         
