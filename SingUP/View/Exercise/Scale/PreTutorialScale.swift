@@ -10,40 +10,53 @@ import AVFoundation
 
 
 struct WelcomeChatOverlay: View {
-    var onDismiss: () -> Void
     @State private var introPlayer: AVAudioPlayer? = nil
-    @State private var isCountingDown = false
+    @State public var isCountingDown = false
+    @State public var isSkipped = false
     @State private var countdownNumber = 3
+    var onDismiss: () -> Void
 
 
     var body: some View {
+        if isSkipped {
+            Text("")
+                .onAppear {
+                    startCountdown()
+
+                }
+        }
+        
         if isCountingDown {
+            
             Text("\(countdownNumber)")
                                 .font(.system(size: 80, weight: .bold))
                                 .foregroundColor(.blue)
                                 .transition(.scale)
                                 .animation(.easeInOut, value: countdownNumber)
         } else {
-            RotatingChatOverlay(
-                    bubbles: [
-                        "Hi, welcome to your first exercise!",
-                            "The scale training is to train your vocal control.",
-                            "In this exercise, you will sing Do, Re, Mi like this for 4 times.",
-                            "As you sing, the blue indicator on the left will move up and down based on your vocal pitch try to match that with the note rectangle coming from the right.",
-                            "Make sure to use headphones and find quiet spot for better vocal precision.",
-                    ],
-                    bubbleDurations: [3.5, 3.5, 16.5, 8.5, 5.5],
-                    onFinished: {
-                        stopIntroAudio()
-                        startCountdown()
-    //                    showWelcomeOverlay = false
-                    },
-                    onBubbleChange: { index in
-                        if index == 0 {
-                            playIntroAudio()
+            if isSkipped == false{
+                RotatingChatOverlay(
+                        bubbles: [
+                            "Hi, welcome to your first exercise!",
+                                "The scale training is to train your vocal control.",
+                                "In this exercise, you will sing Do, Re, Mi like this for 4 times.",
+                                "As you sing, the blue indicator on the left will move up and down based on your vocal pitch try to match that with the note rectangle coming from the right.",
+                                "Make sure to use headphones and find quiet spot for better vocal precision.",
+                        ],
+                        bubbleDurations: [3.5, 3.5, 16.5, 8.5, 5.5],
+                        onFinished: {
+                            stopIntroAudio()
+                            startCountdown()
+        //                    showWelcomeOverlay = false
+                        },
+                        onBubbleChange: { index in
+                            if index == 0 {
+                                playIntroAudio()
+                            }
                         }
-                    }
-                )
+                    )
+            }
+            
 
         }
             }

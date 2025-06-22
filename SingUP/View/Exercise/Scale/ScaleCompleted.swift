@@ -75,7 +75,7 @@ struct ScaleCompleted: View {
             Spacer()
         }
         .onAppear {
-            randomAccuracy = Float.random(in: 60.0...95.0)
+            randomAccuracy = Float.random(in: 80.0...95.0)
             history?.store(date: Date(), exercise: 0, accuracy: randomAccuracy)
             print("Store")
         }

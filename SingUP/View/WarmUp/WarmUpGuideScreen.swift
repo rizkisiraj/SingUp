@@ -27,6 +27,7 @@ struct WarmUpGuideScreen: View {
                 
             Spacer()
             Button {
+                warmup = warmUp
                 path.append(warmUp.path)
             } label: {
                 Text("Start")
@@ -38,7 +39,6 @@ struct WarmUpGuideScreen: View {
             .padding()
             Spacer()
         }
-        .navigationTitle("warmU")
         .padding()
     }
 }

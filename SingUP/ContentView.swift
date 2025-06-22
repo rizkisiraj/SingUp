@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 import AVFoundation
 
 // MARK: PEMBATAS-------------------------
@@ -15,60 +16,77 @@ import AVFoundation
 
 // MARK: PEMBATAS-------------------------
 
+var warmup:WarmUp = listOfWarmUp[0]
+
 struct ContentView: View {
     @State private var path = NavigationPath()
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @Environment(\.modelContext) var context
+    @Query var userProfile : [UserProfile]
+    @State var history : History?
     
     var body: some View {
-        NavigationStack(path : $path) {
-            //Mic()
-            //  WarmUpSessionScreen()
-            HomePage(path : $path)
-                .modelContainer(for : [UserProfile.self, VocalTraining.self])
-            .navigationDestination(for : String.self){ route in
-                if route == "warmup" {
-                    WarmUpPage(path : $path)
-                } else if route == "exercise" {
-                    ExercisePage(path : $path)
-                } else if route == "vocaltest"{
+        NavigationStack(path: $path) {
+            Group {
+                if hasCompletedOnboarding {
+                    HomePage(path: $path)
+                } else {
                     GenderSelection(path: $path)
-                        .modelContainer(for : [UserProfile.self])
-                } else if route == "vtinstruction"{
-                    VocalTestInstruction(path : $path)
-                } else if route == "vtest1"{
-                    VocalTest(path : $path)
-                        .modelContainer(for : [UserProfile.self])
-                } else if route == "vtest2"{
-                    VocalTest(path : $path, type : 1)
-                        .modelContainer(for : [UserProfile.self])
-                } else if route == "warmupdone"{
-                    BreathingDoneScreen(path: $path)
-                } else if route == "vocalresult"{
-                    VocalResult(path : $path)
-                        .modelContainer(for : [UserProfile.self])
-                } else if route == "breathing"{
-                    BreathingView(path: $path)
-                } else if route == "warmupdone" {
-                    BreathingView(path: $path)
-                } else if route == "humming"{
-                    WarmUpSessionScreen()
-                        .modelContainer(for : [UserProfile.self])
-                } else if route == "liptrills"{
-                    WarmUpSessionScreen()
-                        .modelContainer(for : [UserProfile.self])
-                } else if route == "tonguetrill"{
-                    WarmUpSessionScreen()
-                        .modelContainer(for : [UserProfile.self, VocalTraining.self])
-                } else if route == "scale"{
-                    ScaleTraining(path: $path)
-                        .modelContainer(for : [UserProfile.self, VocalTraining.self])
-                } else{
-                    //Mic()
-                    HomePage(path : $path)
-                        .modelContainer(for : [UserProfile.self, VocalTraining.self])
+                        .onAppear {
+                            if userProfile.first == nil{
+                                let newProf = UserProfile(
+                                    gender : "-",
+                                    lowestFrequency: 0,
+                                    highestFrequency: 0, hasScale: false
+                                )
+                                context.insert(newProf)
+                            }
+                        }
                 }
             }
+            .navigationDestination(for: String.self) { route in
+                switch route {
+                case "warmup":
+                    WarmUpPage(path: $path)
+                case "exercise":
+                    ExercisePage(path: $path)
+                case "vocaltest":
+                    GenderSelection(path: $path)
+                case "vtinstruction":
+                    VocalTestInstruction(path: $path)
+                case "vtest1":
+                    VocalTest(path: $path)
+                case "vtest2":
+                    VocalTest(path: $path, type: 1)
+                case "warmupdone":
+                    BreathingDoneScreen(path: $path)
+                case "vocalresult":
+                    VocalResult(path: $path)
+                case "breathing":
+                    BreathingView(path: $path)
+                case "humming", "liptrills", "tonguetrill":
+                    WarmUpSessionScreen(path: $path)
+                case "scale":
+                    ScaleTraining(path: $path)
+                case "home":
+                    HomePage(path: $path)
+                default:
+                    HomePage(path: $path)
+                }
+            }
+            .navigationBarBackButtonHidden(true)
         }
-        .navigationBarBackButtonHidden(true) // Hide the back button in SubView
+        .onAppear {
+            if userProfile.first == nil{
+                let newProf = UserProfile(
+                    gender : "-",
+                    lowestFrequency: 0,
+                    highestFrequency: 0, hasScale: false
+                )
+                context.insert(newProf)
+            }
+        }
+        .preferredColorScheme(.light)
     }
 }
 

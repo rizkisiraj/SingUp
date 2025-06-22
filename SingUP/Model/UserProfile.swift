@@ -13,8 +13,10 @@ class UserProfile {
     var gender:String
     var lowestFrequency:Float
     var highestFrequency:Float
+    var hasScale:Bool
     
-    init(gender: String, lowestFrequency: Float, highestFrequency: Float) {
+    init(gender: String, lowestFrequency: Float, highestFrequency: Float, hasScale:Bool ) {
+        self.hasScale = hasScale
         self.gender = gender
         self.lowestFrequency = lowestFrequency
         self.highestFrequency = highestFrequency

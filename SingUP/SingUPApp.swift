@@ -12,6 +12,7 @@ struct SingUPApp: App {
     var body: some Scene {
         WindowGroup {
             MicPermissionView()
+                .modelContainer(for: [UserProfile.self, VocalTraining.self])
         }
     }
 }

@@ -14,18 +14,23 @@ struct MicPermissionView: View {
     @State private var showSettingsAlert = false
     
     @State private var reloadID = UUID() // <- Add this
-
+    
     var body: some View {
         ZStack {
+            Color.white // Full-screen white background
+                .ignoresSafeArea()
+            
             if showSplash {
                 SplashScreen()
                     .transition(.opacity)
             } else {
                 // Check if user already granted microphone permission
                 if hasGrantedPermission() {
-                    ContentView()  // Directly show SubView if permission is granted
+                    ContentView()
+                        .modelContainer(for: [UserProfile.self, VocalTraining.self])// Directly show SubView if permission is granted
                 } else {
                     OnboardingView(navigateToSubView: $navigateToSubView, showSettingsAlert: $showSettingsAlert, reloadID: $reloadID)
+                        .modelContainer(for: [UserProfile.self, VocalTraining.self])
                 }
             }
         }
@@ -37,6 +42,7 @@ struct MicPermissionView: View {
             }
         }
         .id(reloadID) // <- Add this to re-render the whole view
+        .preferredColorScheme(.light) // <- Force light mode
     }
     
     // Helper function to check if microphone permission is granted

@@ -15,6 +15,7 @@ struct WarmUpSessionScreen: View {
     @State var xPos = 0
     var octave = 2
     var repeater = TaskRepeater()
+    @Binding var path : NavigationPath
     
    let notes = ["A5", "G5", "F5", "E5", "D5", "C5", "B4", "A4", "G4", "F4", "E4", "D4", "C4", "B3", "A3", "G3", "F3", "E3", "D3", "C3", "B2", "A2", "G2", "F2", "E2"]
    
@@ -45,15 +46,9 @@ struct WarmUpSessionScreen: View {
    
    var body: some View {
        VStack {
-           HStack {
-               Button("Exit") {
-                   // Action for exit
-               }
-               .padding(.leading)
-               Spacer()
-           }
+          
            
-           Text("Lip Trills")
+           Text(warmup.title)
                .font(.headline)
                .padding(.top, 5)
            
@@ -123,7 +118,8 @@ struct WarmUpSessionScreen: View {
            // Stop button
            //Text("\((10 - CGFloat(getCurrentNote())) * 24)")
            Button(action: {
-               // Stop action
+               path.removeLast(path.count)
+               path.append("warmupdone")
            }) {
                Text("Stop")
                    .font(.headline)
@@ -164,5 +160,5 @@ struct WarmUpSessionScreen: View {
 
 
 #Preview{
-    WarmUpSessionScreen()
+    WarmUpSessionScreen(path :.constant(NavigationPath()))
 }

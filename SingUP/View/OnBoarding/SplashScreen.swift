@@ -15,6 +15,7 @@ struct SplashScreen: View {
                 Image("SingUpIcon")
             }
         }
+        .preferredColorScheme(.light) // <- Force light mode
     }
 }
 

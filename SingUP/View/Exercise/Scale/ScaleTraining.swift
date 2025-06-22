@@ -24,14 +24,15 @@ struct NoteEvent {
 }
 
 struct ScaleTraining: View {
-    
-    @Query var histories: [History]
+    @Environment(\.modelContext) var context
+    @Query var userProfile : [UserProfile]
     @Binding var path : NavigationPath
     @State private var highlights: [HighlightCell] = []
     @State private var shouldNavigate = false
     @State private var timePerColumn: Double = 1.0
     @State private var lastYIndex: Int = 0
     @State private var lastUpdateTime: Date = .now
+    @State var history : History?
 
     @State private var engine = AudioEngine()
     @State private var sampler = MIDISampler()
@@ -205,6 +206,7 @@ struct ScaleTraining: View {
             }
             .edgesIgnoringSafeArea(.all)
             .onAppear {
+                history = History(context : context)
                 pitchManager.onPitchDetected = { pitch in
                     let midi = 69 + 12 * log2(Double(pitch) / 440)
                     let minMIDINote = 40  // E2
@@ -275,52 +277,178 @@ struct ScaleTraining: View {
                 introPlayer = nil
             }
             .overlay {
-                if isNarrating {
-                    WelcomeChatOverlay {
-                        isNarrating = false
-                        if isAnimating {
-                            stopAnimation()
-                            isPitchMovementActive = false
-                            timer?.invalidate()
-                            showCountdownBar = false
-                            sequencer.stop()
-                        } else {
-                            do {
-                                try engine.start()
-                                sampler.volume = 2.0
-                                sequencer.rewind()
-
-                                let delay: Double = 0.3 // ⏱ Try tweaking between 0.05–0.15
+                if let prof = userProfile.first{
+                    
+                    if isNarrating && prof.hasScale == false {
+                        WelcomeChatOverlay {
+                            
+                            prof.hasScale = true
+                            do{
+                                try context.save()
+                                print("Berhasil menyimpan hasil test")
                                 
-                                let startTime = Date()
-
-                                Timer.scheduledTimer(withTimeInterval: 1.0 / 60.0, repeats: true) { timer in
-                                    let elapsed = Date().timeIntervalSince(startTime)
-                                    let progress = min(elapsed / scrollDuration, 1.0)
-                                    scrollOffset = CGFloat(progress) * CGFloat(totalColumns - 1) * columnWidth
-
-                                    if progress >= 1.0 {
-                                        timer.invalidate()
-                                    }
-                                }
-                                
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                    playSoundAudio()
-                                    startTimer()
-                                }
-
-                                print("🎞️ Scroll from 0 → \(scrollOffset) in \(scrollDuration)s")
-                                isPitchMovementActive = true
-                                isAnimating = true
-                                
-                                showCountdownBar = true
-                            } catch {
-                                print("❌ Engine start failed: \(error)")
+                            }catch{
+                                print("Gagal menyimpan hasil test \(error)")
                             }
+                            
+                            isNarrating = false
+                            if isAnimating {
+                                stopAnimation()
+                                isPitchMovementActive = false
+                                timer?.invalidate()
+                                showCountdownBar = false
+                                sequencer.stop()
+                            } else {
+                                do {
+                                    try engine.start()
+                                    sampler.volume = 2.0
+                                    sequencer.rewind()
+
+                                    let delay: Double = 0.3 // ⏱ Try tweaking between 0.05–0.15
+                                    
+                                    let startTime = Date()
+
+                                    Timer.scheduledTimer(withTimeInterval: 1.0 / 60.0, repeats: true) { timer in
+                                        let elapsed = Date().timeIntervalSince(startTime)
+                                        let progress = min(elapsed / scrollDuration, 1.0)
+                                        scrollOffset = CGFloat(progress) * CGFloat(totalColumns - 1) * columnWidth
+
+                                        if progress >= 1.0 {
+                                            timer.invalidate()
+                                        }
+                                    }
+                                    
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                        playSoundAudio()
+                                        startTimer()
+                                    }
+
+                                    print("🎞️ Scroll from 0 → \(scrollOffset) in \(scrollDuration)s")
+                                    isPitchMovementActive = true
+                                    isAnimating = true
+                                    
+                                    showCountdownBar = true
+                                } catch {
+                                    print("❌ Engine start failed: \(error)")
+                                }
+                            }
+                            
                         }
-                        
+                    }else{
+                        WelcomeChatOverlay(isCountingDown : true, isSkipped : true) {
+                            
+                            prof.hasScale = true
+                            do{
+                                try context.save()
+                                print("Berhasil menyimpan hasil test")
+                                
+                            }catch{
+                                print("Gagal menyimpan hasil test \(error)")
+                            }
+                            
+                            isNarrating = false
+                            if isAnimating {
+                                stopAnimation()
+                                isPitchMovementActive = false
+                                timer?.invalidate()
+                                showCountdownBar = false
+                                sequencer.stop()
+                            } else {
+                                do {
+                                    try engine.start()
+                                    sampler.volume = 2.0
+                                    sequencer.rewind()
+
+                                    let delay: Double = 0.3 // ⏱ Try tweaking between 0.05–0.15
+                                    
+                                    let startTime = Date()
+
+                                    Timer.scheduledTimer(withTimeInterval: 1.0 / 60.0, repeats: true) { timer in
+                                        let elapsed = Date().timeIntervalSince(startTime)
+                                        let progress = min(elapsed / scrollDuration, 1.0)
+                                        scrollOffset = CGFloat(progress) * CGFloat(totalColumns - 1) * columnWidth
+
+                                        if progress >= 1.0 {
+                                            timer.invalidate()
+                                        }
+                                    }
+                                    
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                        playSoundAudio()
+                                        startTimer()
+                                    }
+
+                                    print("🎞️ Scroll from 0 → \(scrollOffset) in \(scrollDuration)s")
+                                    isPitchMovementActive = true
+                                    isAnimating = true
+                                    
+                                    showCountdownBar = true
+                                } catch {
+                                    print("❌ Engine start failed: \(error)")
+                                }
+                            }
+                            
+                        }
                     }
                 }
+                else {
+                    if isNarrating{
+                        WelcomeChatOverlay {
+                            
+                            do{
+                                try context.save()
+                                print("Berhasil menyimpan hasil test")
+                                
+                            }catch{
+                                print("Gagal menyimpan hasil test \(error)")
+                            }
+                            
+                            isNarrating = false
+                            if isAnimating {
+                                stopAnimation()
+                                isPitchMovementActive = false
+                                timer?.invalidate()
+                                showCountdownBar = false
+                                sequencer.stop()
+                            } else {
+                                do {
+                                    try engine.start()
+                                    sampler.volume = 2.0
+                                    sequencer.rewind()
+                                    
+                                    let delay: Double = 0.3 // ⏱ Try tweaking between 0.05–0.15
+                                    
+                                    let startTime = Date()
+                                    
+                                    Timer.scheduledTimer(withTimeInterval: 1.0 / 60.0, repeats: true) { timer in
+                                        let elapsed = Date().timeIntervalSince(startTime)
+                                        let progress = min(elapsed / scrollDuration, 1.0)
+                                        scrollOffset = CGFloat(progress) * CGFloat(totalColumns - 1) * columnWidth
+                                        
+                                        if progress >= 1.0 {
+                                            timer.invalidate()
+                                        }
+                                    }
+                                    
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                        playSoundAudio()
+                                        startTimer()
+                                    }
+                                    
+                                    print("🎞️ Scroll from 0 → \(scrollOffset) in \(scrollDuration)s")
+                                    isPitchMovementActive = true
+                                    isAnimating = true
+                                    
+                                    showCountdownBar = true
+                                } catch {
+                                    print("❌ Engine start failed: \(error)")
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+                
             }
             .navigationDestination(isPresented: $shouldNavigate) {
                 ScaleCompleted(history: $history, path: $path) // <- replace with your actual destination view
@@ -340,8 +468,6 @@ struct ScaleTraining: View {
             currentYIndex += 1
         }
     }
-    @Environment(\.modelContext) var context
-        @State var history : History?
     
     func frequencyToNoteNumber(_ frequency: Float) -> Int {
         return Int(round(12 * log2(frequency / 440.0) + 69))
